@@ -24,7 +24,8 @@ npm install @mui/icons-material
 
 
 Aggiornare github:
-(npm install gh-pages)
+Su terminal: npm install gh-pages
+Su Git Bash:
 1. git init
 2. git add .
 3. git commit -m "first commit"

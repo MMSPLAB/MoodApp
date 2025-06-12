@@ -1,0 +1,6 @@
+{
+  "appId": "com.example.moodapp",
+  "appName": "mood-app",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

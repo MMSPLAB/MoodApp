@@ -1,0 +1,44 @@
+{
+    "avatarRobot" : {
+        "n1": {
+            "title": "teso-preoccupato",
+            "image": "/singoliMoodRobot/n1.png",
+            "alt": "teso-preoccupato"
+        },
+        "n2": {
+            "title": "annoiato-stanco",
+            "image": "/singoliMoodRobot/n2.png",
+            "alt": "annoiato-stanco"
+        },
+        "n3": {
+            "title": "avvilito-triste",
+            "image": "/singoliMoodRobot/n3.png",
+            "alt": "avvilito-triste"
+        },
+        "n4": {
+            "title": "irritato-infastidito",
+            "image": "/singoliMoodRobot/n4.png",
+            "alt": "irritato-infastidito"
+        },
+        "p1": {
+            "title": "entusiasta-vivace",
+            "image": "/singoliMoodRobot/p1.png",
+            "alt": "entusiasta-vivace"
+        },
+        "p2": {
+            "title": "allegro-felice",
+            "image": "/singoliMoodRobot/p2.png",
+            "alt": "allegro-felice"
+        },
+        "p3": {
+            "title": "rilassato-spensierato",
+            "image": "/singoliMoodRobot/p3.png",
+            "alt": "rilassato-spensierato"
+        },
+        "p4": {
+            "title": "calmo-sereno",
+            "image": "/singoliMoodRobot/p4.png",
+            "alt": "calmo-sereno"
+        }
+    }
+}

@@ -1,0 +1,505 @@
+/*-----------------------------------*\
+  #ROOT
+\*-----------------------------------*/
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: left;
+}
+
+button.MuiButton-root {
+  text-transform: none;
+  /* disabilita maiuscole globali */
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+h1 {
+  font-size: 36px;
+  font-weight: bolder;
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: bolder;
+}
+
+/*-----------------------------------*\
+  #REUSED STYLE
+\*-----------------------------------*/
+
+.blue {
+  color: #005DD3;
+  font-weight: 600;
+}
+
+.blu-maiuscolo {
+  text-align: center;
+  text-transform: uppercase;
+  color: #005DD3;
+}
+
+.maiuscolo {
+  text-transform: uppercase;
+}
+
+.close-icon {
+  display: flex;
+  justify-content: right;
+}
+
+.arrow-right {
+  display: flex;
+  justify-content: right;
+  margin-top: 20px;
+}
+
+.arrow-left {
+  display: flex;
+  justify-content: left;
+}
+
+.bottom-button {
+  position: fixed;
+  bottom: 20px;
+  box-sizing: border-box;
+  left: 0;
+  right: 0;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+/*-----------------------------------*\
+  #USER ID
+\*-----------------------------------*/
+
+.user-id {
+  display: flex;
+  margin: 0 auto;
+  flex-direction: column;
+  width: 100%;
+}
+
+.user-id p {
+  margin-top: -7%
+}
+
+.user-id .MuiTextField-root {
+  width: 100%;
+  max-width: 400px; /* opzionale per limitarne la larghezza su desktop */
+}
+
+.bottone-userID {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.user-id h5 {
+  font-weight: bold;
+}
+
+.naviga-id-dimenticato {
+  text-align: right;
+  margin-top: 20px;
+  margin-right: 1%;
+}
+
+/*-----------------------------------*\
+  #USER ID DIMENTICATO
+\*-----------------------------------*/
+
+.bottone-userID-dimenticato {
+  margin-top: 20px;
+  width: 100%;
+  max-width: 400px;
+}
+
+/*-----------------------------------*\
+  #PAGINE DI TESTO
+\*-----------------------------------*/
+
+ol.custom-list {
+  list-style: none;              /* Rimuove il marcatore standard */
+  counter-reset: my-counter;     /* Inizializza il contatore */
+  padding-left: 0;
+  margin-left: 0;
+}
+
+ol.custom-list li {
+  counter-increment: my-counter; /* Incrementa il contatore */
+  position: relative;
+  padding-left: 2em;             /* Spazio tra numero e testo */
+  margin-bottom: 0.6em;          /* Distanza tra le voci */
+}
+
+ol.custom-list li::before {
+  content: counter(my-counter);  /* Mostra il numero */
+  font-weight: bold;             /* Numero in grassetto */
+  position: absolute;
+  left: 0;
+}
+
+/*-----------------------------------*\
+  #GENERALITà
+\*-----------------------------------*/
+
+.titolo-generalità {
+  display: flex;
+  justify-content: center;
+}
+
+.form-generalità {
+  display: flex;
+  margin: 0 auto;
+  flex-direction: column;
+  width: 100%;
+}
+
+.form-generalità .MuiTextField-root {
+  width: 100%;
+  max-width: 400px;
+}
+
+.radio-altro-opzione {
+  display: flex;
+  align-items: left;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.input-istruzione {
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background-color: transparent;
+  color: inherit;
+  flex: 1;
+}
+
+/*-----------------------------------*\
+  #AVATAR
+\*-----------------------------------*/
+
+/* Titolo fisso */
+.avatar-titolo {
+  margin: 20px 0;
+  text-align: center;
+}
+
+/* Contenitore con scroll */
+.avatar-scroll-wrapper {
+  width: 100%;
+  -webkit-overflow-scrolling: touch;
+  padding: 20px 0;
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  width: 80vw;
+  box-sizing: border-box;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Container interno per flex orizzontale */
+.avatar-scroll-container {
+  display: flex;
+  flex-direction: row;
+  width: max-content;
+  gap: 20px;
+  padding: 10px;
+}
+
+.avatar {
+  width: 200px;
+  height: auto;
+  flex-shrink: 0; /* Impedisce che si restringano */
+  transition: border 0.3s ease;
+}
+
+.avatar.selected {
+  border: 2px solid #005DD3;
+  border-radius: 20px;
+}
+
+/* Nascondi scrollbar */
+.avatar-scroll-wrapper::-webkit-scrollbar {
+  display: none;
+}
+
+/*-----------------------------------*\
+  #QUESTIONARI
+\*-----------------------------------*/
+
+.slider {
+  display: flex;
+  justify-content: center;
+  margin: 25px;
+}
+
+.header-questionari {
+  text-align: center;
+}
+
+.numero-domanda{
+  text-align: center;
+  color: #BAD1EF;
+}
+
+/*-----------------------------------*\
+  #HOME
+\*-----------------------------------*/
+
+.sessione {
+  width: 100px;
+  height: auto;
+  color: #000000;
+  background-color: #FFFFFF;
+  border: #e5e7eb;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 10px 15px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.sottotitolo {
+  color: #71727A;
+  font-size: large;
+  font-weight: normal;
+}
+
+.completati {
+  width: 100px;
+  height: auto;
+  color: #000000;
+  background-color: #FFFFFF;
+  border: #e5e7eb;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 10px 15px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.barra-info {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  margin: 20px 5vw;
+}
+
+.bottone-home {
+  display: flex;
+  justify-content: center;
+}
+
+/*-----------------------------------*\
+  #PICK A MOOD
+\*-----------------------------------*/
+
+.mood-button img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.titolo-mood {
+  margin-bottom: 30px;
+}
+
+.mood-circle-container {
+  position: relative;
+  width: 100%;
+  max-width: 350px;
+  height: 100vh; /* altezza schermo intero */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* centra verticalmente il contenuto */
+  align-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.pick-a-mood {
+  overflow: hidden;
+}
+
+/*-----------------------------------*\
+  #MOOD INTENSITY
+\*-----------------------------------*/
+
+.rating {
+  margin: 0 5px;
+  transition: fill 0.3s ease, stroke-width 0.3s ease;
+  overflow: visible;
+  display: flex;
+  justify-content: center;
+}
+
+.mood-intensity-img {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  margin-top: -50px;
+}
+
+@media (max-width: 400px) {
+  .circle-rating {
+    width: 100%;
+    height: auto;
+  }
+}
+
+.circle-rating {
+/*   width: 300px;
+  height: 100px; */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  width: 100%;
+  margin: 15px 0 15px 0;
+  padding: 1rem 0;
+}
+
+.rating-span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  
+}
+
+.mood-intensity {
+  width: 100vw; /* Usa tutto lo schermo orizzontale */
+  max-width: 425px; /* Larghezza massima per mobile */
+  height: 100vh; /* Piena altezza schermo */
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+
+/*-----------------------------------*\
+  #STIMOLO VALUTAZIONE
+\*-----------------------------------*/
+
+.stimolo-valutazione {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: hidden;
+}
+
+.stimolo-titolo {
+  text-align: center;
+  margin: 0;
+  font-size: 1.2rem;
+  line-height: 1.2;
+}
+
+.image-container {
+  height: 22vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-container img {
+  width: auto;
+  height: 180px;
+  max-width: 90%;
+  object-fit: contain;
+}
+
+.image {
+  max-width: 90%;
+  max-height: 180px;
+  object-fit: contain;
+  margin: 20px 0;
+}
+
+.valutazione-titolo {
+  text-align: center;
+  margin-bottom: -15px;
+}
+
+.valutazione-blocco {
+  height: 45vh;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  transition: opacity 0.4s ease;
+}
+
+.valutazione {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  max-width: 90%;
+}
+
+.valutazione-buttons {
+  width: 250px;
+}
+
+/*-----------------------------------*\
+  #FINE QUESTIONARIO
+\*-----------------------------------*/
+
+.fine-questionario-testo {
+  position: fixed;
+  top: 20px; /* Ancorato in alto */
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center; /* o 'flex-start' se vuoi allineamento a sinistra */
+  box-sizing: border-box;
+  padding: 1rem; /* margine interno per respirare */
+  z-index: 1000; /* per stare sopra ad altri elementi */
+}
+
+.fine-questionario-testo h3 {
+  text-align: center;
+  font-weight: bold;
+  font-size: x-large;
+}
+
+.fine-questionario-testo p {
+  margin-left: 20px;
+}
+
+.button-fine-questionario {
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  bottom: 20px;
+}

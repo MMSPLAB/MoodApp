@@ -1,0 +1,84 @@
+{
+    "pages": [
+        {
+            "page" : 1,
+            "question" : "INTERESSATO/A"
+        },
+        {
+            "page" : 2,
+            "question" : "ANGOSCIATO/A"
+        },
+        {
+            "page" : 3,
+            "question" : "ECCITATO/A"  
+        },
+        {
+            "page" : 4,
+            "question" : "TURBATO/A"           
+        },
+        {
+            "page" : 5,
+            "question" : "FORTE"    
+        },
+        {
+            "page" : 6,
+            "question" : "COLPEVOLE"   
+        },
+        {
+            "page" : 7,
+            "question" : "SPAVENTATO/A"  
+        },
+        {
+            "page" : 8,
+            "question" : "OSTILE"   
+        },
+        {
+            "page" : 9,
+            "question" : "ENTUSIASTA"
+        },
+        {
+            "page" : 10,
+            "question" : "ORGOGLIOSO/A"            
+        },
+        {
+            "page" : 11,
+            "question" : "IRRITABILE"            
+        },
+        {
+            "page" : 12,
+            "question" : "CONCENTRATO/A"
+        },
+        {
+            "page" : 13,
+            "question" : "VERGOGNATO/A"
+        },
+        {
+            "page" : 14,
+            "question" : "ISPIRATO/A"
+        },
+        {
+            "page" : 15,
+            "question" : "NERVOSO/A"    
+        },
+        {
+            "page" : 16,
+            "question" : "DETERMINATO/A"
+        },
+        {
+            "page" : 17,
+            "question" : "ATTENTO/A"
+        },
+        {
+            "page" : 18,
+            "question" : "AGITATO/A"
+        },
+        {
+            "page" : 19,
+            "question" : "ATTIVO/A"
+        },
+        {
+            "page" : 20,
+            "question" : "IMPAURITO/A"
+        }
+    ]
+}

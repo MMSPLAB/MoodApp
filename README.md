@@ -23,7 +23,7 @@ Procedura per effettuare modifiche e visualizzarle:
 npm install @mui/icons-material
 
 
-Aggiornare github:
+## Aggiornare github:
 Su terminal: npm install gh-pages
 Su Git Bash:
 1. git init

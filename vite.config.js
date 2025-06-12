@@ -4,5 +4,5 @@ import react from '@vitejs/plugin-react'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react()],
-  base: "/MMSP-MoodApp", // For GitHub web app
+  base: "/MoodApp", // For GitHub web app
 })

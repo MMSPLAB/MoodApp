@@ -24,11 +24,21 @@ npm install @mui/icons-material
 
 
 ## Aggiornare github:
-Su terminal: npm install gh-pages
+Su terminal: 
+- [npm install gh-pages]
+- npm install
+- npm run build
+- npm run deploy
 Su Git Bash:
 1. git init
 2. git add .
 3. git commit -m "first commit"
 git branch -M main
 git remote add origin https://github.com/MMSPLAB/MMSP-MoodApp.git
+git pull origin main --rebase
+git push -u origin main
+
+
+git remote add origin https://github.com/MMSPLAB/MoodApp.git
+git branch -M main
 git push -u origin main

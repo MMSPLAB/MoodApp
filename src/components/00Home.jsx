@@ -445,9 +445,9 @@ function Home() {
                                 });
                                 addLog("test");
                                 // precarica e salva data URL
-                                const results = await Promise.allSettled(images.map(it => preloadImage(it.url, it.index)));
+                                /*const results = await Promise.allSettled(images.map(it => preloadImage(it.url, it.index)));
                                 addLog("test2");
-                                const ok = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
+                                const ok = results.filter(r => r.status === 'fulfilled' && r.value.success).length;*/
                                 addLog(`Preload immagini completato: ${ok}/${json.immagini.length}`);
                                 safeStorage.setItem('preloadDone', 'true');
                             } else {

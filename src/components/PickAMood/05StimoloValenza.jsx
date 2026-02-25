@@ -263,6 +263,10 @@ function StimoloValenza() {
             <p style={{ color: "red", marginBottom: 8 }}>
               Non è stato possibile cariare questa immagine
             </p>
+            <Button variant="contained" size="small" onClick={() => {setErrore(null); handleReloadImage();}}>
+              Ricarica immagine
+            </Button>
+            <br/>
             <Button variant="contained" size="small" onClick={() => {setValence(-1); handleNext()}}>
               Prossimo step
             </Button>

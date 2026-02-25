@@ -266,7 +266,7 @@ function StimoloValenza() {
             <Button variant="contained" size="small" onClick={() => {setErrore(null); handleReloadImage();}}>
               Ricarica immagine
             </Button>
-            <br/>
+            <br/> <br />
             <Button variant="contained" size="small" onClick={() => {setValence(-1); handleNext()}}>
               Prossimo step
             </Button>

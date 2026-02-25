@@ -432,7 +432,7 @@ function Home() {
                                     index: i
                                 }));
                                 // salva metadati solo se validi
-                                addDebugLog(JSON.stringify(images));
+                                addLog(JSON.stringify(images));
                                 images.forEach(item => {
                                     safeStorage.setItem(`stimulusFile${item.index + 1}`, item.name);
                                     safeStorage.setItem(`stimulusURL${item.index + 1}`, item.url);

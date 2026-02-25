@@ -406,7 +406,7 @@ function Home() {
                         try {
                             addLog('Fetching dati immagini...');
                             const fres = await fetchWithRetry(url);
-                            addDebugLog(`Fetch risultato: ${fres.success ? 'successo' : 'fallito'}`);
+                            addLog(`Fetch risultato: ${fres.success ? 'successo' : 'fallito'}`);
                             let json;
                             if (!fres?.success) {
                                 addLog('Fetch fallito, provo JSONP...', 'warn');
@@ -415,7 +415,7 @@ function Home() {
                                 json = j.data;
                             } else {
                                 json = fres.data;
-                                addDebugLog(JSON.stringify(json)); 
+                                addLog(JSON.stringify(json)); 
                             }
 
                             if (
@@ -437,10 +437,10 @@ function Home() {
                                     safeStorage.setItem(`stimulusFile${item.index + 1}`, item.name);
                                     safeStorage.setItem(`stimulusURL${item.index + 1}`, item.url);
                                 });
-                                addDebugLog("test");
+                                addLog("test");
                                 // precarica e salva data URL
                                 const results = await Promise.allSettled(images.map(it => preloadImage(it.url, it.index)));
-                                addDebugLog("test2");
+                                addLog("test2");
                                 const ok = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
                                 addLog(`Preload immagini completato: ${ok}/${results.length}`);
                                 safeStorage.setItem('preloadDone', 'true');

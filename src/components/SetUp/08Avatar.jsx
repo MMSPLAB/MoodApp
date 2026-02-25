@@ -3,22 +3,22 @@ import { Button } from "@mui/material";
 import { useNavigate } from 'react-router';
 import WestSharpIcon from '@mui/icons-material/WestSharp';
 import EastSharpIcon from '@mui/icons-material/EastSharp';
+import safeStorage from "../../../safeStorage";
 
 const avatars = [
-  { id: 'female', value: 'avatarFemale', source: "/immaginiAvatar/avatarFemale.png" },
-  { id: 'robot', value: 'avatarRobot', source: "/immaginiAvatar/avatarRobot.png" },
-  { id: 'male', value: 'avatarMale', source: "/immaginiAvatar/avatarMale.png" }
+  { id: 'female', value: 'avatarFemale', source: "/immaginiAvatar/singleimages_female-0-CHOOSE.png" },
+  { id: 'robot', value: 'avatarRobot', source: "/immaginiAvatar/singleimages_robot-0-CHOOSE.png" },
+  { id: 'male', value: 'avatarMale', source: "/immaginiAvatar/singleimages_male-0-CHOOSE.png" }
 ]
 
 function SceltaAvatar() {
   //gestire l'avatar scelto
   const [selectedAvatar, setSelectedAvatar] = useState(""); //creo uno stato momentaneamente vuoto in formato stringa
-  const [savedUserID, setSavedUserID] = useState(localStorage.getItem("userID")); //recupero dal localstorage il nome utente e lo memorizzo in questa componente
 
   //recuperare dal locale l'avatar salvato
-  //ho spostato lo useEffect qui sopra perché ricaricando la pagina l'avatar non rimaneva in memoria nel localStorage se il recupero dell'avatar era dopo il salvataggio in locale
+  //ho spostato lo useEffect qui sopra perché ricaricando la pagina l'avatar non rimaneva in memoria nel safeStorage se il recupero dell'avatar era dopo il salvataggio in locale
   useEffect(() => {
-    const savedAvatar = localStorage.getItem("selectedAvatar");
+    const savedAvatar = safeStorage.getItem("selectedAvatar");
     if (savedAvatar) {
       setSelectedAvatar(savedAvatar);
     }
@@ -34,7 +34,7 @@ function SceltaAvatar() {
 
   //salvare in locale l'avatar scelto
   useEffect(() => {
-    localStorage.setItem("selectedAvatar", selectedAvatar); //stringify non può salvare oggetti circolari come eventi
+    safeStorage.setItem("selectedAvatar", selectedAvatar); //stringify non può salvare oggetti circolari come eventi
   }, [selectedAvatar]);
 
 
@@ -50,7 +50,7 @@ function SceltaAvatar() {
   return (
     <div>
       <div className="arrow-left">
-        <Button variant="outlined" onClick={() => navigate("/generalità")}> {/* ← */}<WestSharpIcon /> </Button>
+        <Button variant="outlined" onClick={() => navigate("/generalità")}>   <WestSharpIcon /> </Button>
       </div>
       <div>
         <div className="avatar-titolo">
@@ -62,8 +62,11 @@ function SceltaAvatar() {
           </div>
         </div>
       </div>
+      <div className="red">
+        <p>*completa tutti i campi prima di procedere.</p>
+      </div>
       <div className="arrow-right">
-        <Button variant="contained" disabled={!selectedAvatar} onClick={() => navigate("/fine-prima-parte-registrazione")} >{/* → */}<EastSharpIcon /></Button>
+        <Button variant="contained" disabled={!selectedAvatar} onClick={() => navigate("/fine-prima-parte-registrazione")} > <EastSharpIcon /></Button>
       </div>
     </div>
   )

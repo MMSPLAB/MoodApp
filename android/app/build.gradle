@@ -1,12 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    namespace "com.example.moodapp"
+    namespace "com.example.localapp"
     compileSdk rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "com.example.moodapp"
+        applicationId "com.example.localapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
+        //versionCode 2
+        //versionName "1.1"
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -16,6 +18,16 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+
+    signingConfigs {
+        debug {
+            storeFile file('../keystore/debug.keystore') // percorso del file condiviso
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false

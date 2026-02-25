@@ -2,126 +2,126 @@
     "avatarRobot" : {
         "n1": {
             "title": "annoiato-stanco",
-            "image": "/singoliMoodRobot/singleimages_robot-N1-BORED.png",
+            "image": "./singoliMoodRobot/singleimages_robot-N1-BORED.png",
             "alt": "annoiato-stanco"
         },
         "n2": {
             "title": "avvilito-triste",
-            "image": "/singoliMoodRobot/singleimages_robot-N2-SAD.png",
+            "image": "./singoliMoodRobot/singleimages_robot-N2-SAD.png",
             "alt": "avvilito-triste"
         },
         "n3": {
             "title": "irritato-infastidito",
-            "image": "/singoliMoodRobot/singleimages_robot-N3-IRRITATED.png",
+            "image": "./singoliMoodRobot/singleimages_robot-N3-IRRITATED.png",
             "alt": "irritato-infastidito"
         },
         "n4": {
             "title": "teso-preoccupato",
-            "image": "/singoliMoodRobot/singleimages_robot-N4-TENSE.png",
+            "image": "./singoliMoodRobot/singleimages_robot-N4-TENSE.png",
             "alt": "teso-preoccupato"
         },
         "p1": {
             "title": "entusiasta-vivace",
-            "image": "/singoliMoodRobot/singleimages_robot-P1-EXCITED.png",
+            "image": "./singoliMoodRobot/singleimages_robot-P1-EXCITED.png",
             "alt": "entusiasta-vivace"
         },
         "p2": {
             "title": "allegro-felice",
-            "image": "/singoliMoodRobot/singleimages_robot-P2-CHEERFUL.png",
+            "image": "./singoliMoodRobot/singleimages_robot-P2-CHEERFUL.png",
             "alt": "allegro-felice"
         },
         "p3": {
             "title": "rilassato-spensierato",
-            "image": "/singoliMoodRobot/singleimages_robot-P3-RELAXED.png",
+            "image": "./singoliMoodRobot/singleimages_robot-P3-RELAXED.png",
             "alt": "rilassato-spensierato"
         },
         "p4": {
             "title": "calmo-sereno",
-            "image": "/singoliMoodRobot/singleimages_robot-P4-CALM.png",
+            "image": "./singoliMoodRobot/singleimages_robot-P4-CALM.png",
             "alt": "calmo-sereno"
         }
     },
     "avatarFemale" : {
         "n1": {
             "title": "annoiato-stanco",
-            "image": "/singoliMoodFemale/singleimages_female-N1-BORED.png",
+            "image": "./singoliMoodFemale/singleimages_female-N1-BORED.png",
             "alt": "annoiato-stanco"
         },
         "n2": {
             "title": "avvilito-triste",
-            "image": "/singoliMoodFemale/singleimages_female-N2-SAD.png",
+            "image": "./singoliMoodFemale/singleimages_female-N2-SAD.png",
             "alt": "avvilito-triste"
         },
         "n3": {
             "title": "irritato-infastidito",
-            "image": "/singoliMoodFemale/singleimages_female-N3-IRRITATED.png",
+            "image": "./singoliMoodFemale/singleimages_female-N3-IRRITATED.png",
             "alt": "irritato-infastidito"
         },
         "n4": {
             "title": "teso-preoccupato",
-            "image": "/singoliMoodFemale/singleimages_female-N4-TENSE.png",
+            "image": "./singoliMoodFemale/singleimages_female-N4-TENSE.png",
             "alt": "teso-preoccupato"
         },
         "p1": {
             "title": "entusiasta-vivace",
-            "image": "/singoliMoodFemale/singleimages_female-P1-EXCITED.png",
+            "image": "./singoliMoodFemale/singleimages_female-P1-EXCITED.png",
             "alt": "entusiasta-vivace"
         },
         "p2": {
             "title": "allegro-felice",
-            "image": "/singoliMoodFemale/singleimages_female-P2-CHEERFUL.png",
+            "image": "./singoliMoodFemale/singleimages_female-P2-CHEERFUL.png",
             "alt": "allegro-felice"
         },
         "p3": {
             "title": "rilassato-spensierato",
-            "image": "/singoliMoodFemale/singleimages_female-P3-RELAXED.png",
+            "image": "./singoliMoodFemale/singleimages_female-P3-RELAXED.png",
             "alt": "rilassato-spensierato"
         },
         "p4": {
             "title": "calmo-sereno",
-            "image": "/singoliMoodFemale/singleimages_female-P4-CALM.png",
+            "image": "./singoliMoodFemale/singleimages_female-P4-CALM.png",
             "alt": "calmo-sereno"
         }
     },
     "avatarMale" : {
         "n1": {
             "title": "annoiato-stanco",
-            "image": "/singoliMoodMale/singleimages_male-N1-BORED.png",
+            "image": "./singoliMoodMale/singleimages_male-N1-BORED.png",
             "alt": "annoiato-stanco"
         },
         "n2": {
             "title": "avvilito-triste",
-            "image": "/singoliMoodMale/singleimages_male-N2-SAD.png",
+            "image": "./singoliMoodMale/singleimages_male-N2-SAD.png",
             "alt": "avvilito-triste"
         },
         "n3": {
             "title": "irritato-infastidito",
-            "image": "/singoliMoodMale/singleimages_male-N3-IRRITATED.png",
+            "image": "./singoliMoodMale/singleimages_male-N3-IRRITATED.png",
             "alt": "irritato-infastidito"
         },
         "n4": {
             "title": "teso-preoccupato",
-            "image": "/singoliMoodMale/singleimages_male-N4-TENSE.png",
+            "image": "./singoliMoodMale/singleimages_male-N4-TENSE.png",
             "alt": "teso-preoccupato"
         },
         "p1": {
             "title": "entusiasta-vivace",
-            "image": "/singoliMoodMale/singleimages_male-P1-EXCITED.png",
+            "image": "./singoliMoodMale/singleimages_male-P1-EXCITED.png",
             "alt": "entusiasta-vivace"
         },
         "p2": {
             "title": "allegro-felice",
-            "image": "/singoliMoodMale/singleimages_male-P2-CHEERFUL.png",
+            "image": "./singoliMoodMale/singleimages_male-P2-CHEERFUL.png",
             "alt": "allegro-felice"
         },
         "p3": {
             "title": "rilassato-spensierato",
-            "image": "/singoliMoodMale/singleimages_male-P3-RELAXED.png",
+            "image": "./singoliMoodMale/singleimages_male-P3-RELAXED.png",
             "alt": "rilassato-spensierato"
         },
         "p4": {
             "title": "calmo-sereno",
-            "image": "/singoliMoodMale/singleimages_male-P4-CALM.png",
+            "image": "./singoliMoodMale/singleimages_male-P4-CALM.png",
             "alt": "calmo-sereno"
         }
     }

@@ -170,13 +170,13 @@ function Generality() {
                             <TextField required variant="outlined" placeholder="Marca dispositivo" value={dispositivo} name="Dispositivo" onChange={handleDispositivoChange} /> <br />
                         </div>
                         <br />
-                        <div className="red">
-                            <p>*completa tutti i campi prima di procedere.</p>
-                        </div>
-                        <div className="arrow-right">
-                            <Button variant="contained" disabled={!gender || age === "" || isNaN(age) || age < 18 || age > 115 || !istruzione || !dispositivo} type="submit" onClick={() => navigate("/scelta-avatar")}> <EastSharpIcon /></Button>
-                        </div>
                     </form>
+                    <div className="red">
+                        <p>*completa tutti i campi prima di procedere.</p>
+                    </div>
+                    <div className="arrow-right">
+                        <Button variant="contained" disabled={!gender || age === "" || isNaN(age) || age < 18 || age > 115 || !istruzione || !dispositivo} type="submit" onClick={() => navigate("/scelta-avatar")}> <EastSharpIcon /></Button>
+                    </div>
                 </div>
             </div>
         </div >

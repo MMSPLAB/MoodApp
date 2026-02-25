@@ -4,65 +4,46 @@ import { useNavigate, useParams } from 'react-router';
 import panas from "../assets/PANASQuestions.json";
 import WestSharpIcon from '@mui/icons-material/WestSharp';
 import EastSharpIcon from '@mui/icons-material/EastSharp';
+import CircularProgress from "@mui/material/CircularProgress";
+import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
+import config from "../../environment";
+import safeStorage from "../../safeStorage";
+import { addDebugLog, addLog } from "../logs";
 
 function PANAS() {
     const { questionNumber, type } = useParams();
     const navigate = useNavigate();
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitError, setSubmitError] = useState(null);
 
     if (!type || (type !== "iniziale" && type !== "finale")) {
-        return <div>❌ Tipo di PANAS non valido. Assicurati che l'URL sia corretto.</div>;
+        navigate("/panas-introduzione");
     }
 
     const currentQuestionIndex = parseInt(questionNumber, 10) - 1;
 
     const [value, setValue] = useState(null);
-    const [answer, setAnswer] = useState(() => { //questo stato viene aggiornato ogni volta
+    const [answer, setAnswer] = useState(() => {
         const savedAnswers = {};
         for (let i = 1; i <= panas.pages.length; i++) {
-            const stored = localStorage.getItem(`panas-${type}-${i}`);
+            const stored = safeStorage.getItem(`panas-${type}-${i}`);
             if (stored !== null) {
-                savedAnswers[`panas-${type}-${i}`] = parseInt(stored, 10)
+                savedAnswers[`panas-${type}-${i}`] = parseInt(stored, 10);
             }
         }
         return savedAnswers;
     });
-
-    useEffect(() => {
-        localStorage.setItem(`panas-${type}-answers`, JSON.stringify(answer));
-    }, [answer, type]);
-
-    //se il nome della route non è corretto viene mostrato un messaggio di errore
-    if (
-        isNaN(currentQuestionIndex) ||
-        currentQuestionIndex < 0 ||
-        currentQuestionIndex >= panas.pages.length
-    ) {
-        return <div>Domanda non valida</div>;
-    }
-
-    useEffect(() => {
-        const key = `panas-${type}-${currentQuestionIndex + 1}`;
-        const savedValue = localStorage.getItem(key);
-        if (savedValue !== null) {
-            setValue(parseInt(savedValue, 10));
-        } else {
-            setValue(null);
-        }
-    }, [questionNumber, type]);
-
-    //logica per passare alla pagina successiva e salvare coppie chiave-valore
     const handleNext = async () => {
         const nextIndex = currentQuestionIndex + 1;
-
         if (nextIndex < panas.pages.length) {
             navigate(`/panas/${type}/${nextIndex + 1}`);
         } else {
             const allAnswers = {};
             for (let i = 1; i <= panas.pages.length; i++) {
                 const key = `panas-${type}-${i}`;
-                const val = localStorage.getItem(key);
+                const val = safeStorage.getItem(key);
                 if (val !== null) {
                     allAnswers[key] = parseInt(val, 10);
                 }
@@ -73,11 +54,10 @@ function PANAS() {
                     type: "iniziale",
                     answers: allAnswers,
                 };
-                localStorage.setItem("dataPanas-iniziale", JSON.stringify(dataPanasIniziale));
-                navigate("/fine-questionario");
+                safeStorage.setItem("dataPanas-iniziale", JSON.stringify(dataPanasIniziale));
+                navigate("/hexaco-introduzione");
             } else if (type === "finale") {
                 setIsSubmitting(true);
-
             }
 
             if (type === "finale") {
@@ -85,40 +65,64 @@ function PANAS() {
                 const dataPanasFinale = {
                     type: "finale",
                     answers: allAnswers,
-                    userID: localStorage.getItem("userID"),
+                    userID: safeStorage.getItem("userID"),
                     date: new Date().toLocaleDateString("it-IT")
                 };
 
-                localStorage.setItem("dataPanas-finale", JSON.stringify(dataPanasFinale));
+                safeStorage.setItem("dataPanas-finale", JSON.stringify(dataPanasFinale));
+                safeStorage.setItem("panasFinaleCompletato", "true");
 
                 try {
-                    const response = await fetch("https://script.google.com/macros/s/AKfycbyIP4suaMlpuktzTXz2kLNkjRN-lAKu9R6qpi66WUy7W4-jSHz9wI08uUPevvKgnNhzpw/exec", {
+                    setSubmitError(null);
+                    // Timeout di 25 secondi per dare tempo ad Apps Script
+                    const controller = new AbortController();
+                    const timeoutId = setTimeout(() => controller.abort(), 25000);
+                    addDebugLog("Dati PANAS finale" + JSON.stringify(dataPanasFinale))
+
+                    const response = await fetch(config.salvataggio_panas_finale, {
                         method: "POST",
                         headers: {
                             "Content-Type": "text/plain",
                         },
                         body: JSON.stringify(dataPanasFinale),
+                        signal: controller.signal,
+                        redirect: "follow" // Necessario per Safari con Apps Script
                     });
 
-                    const result = await response.text();
-                    console.log("Invio PANAS finale:", result);
+                    clearTimeout(timeoutId);
+                    const body = await response.text();
 
-                    /*   // Pulisce i dati salvati
-                      for (let i = 1; i <= panas.pages.length; i++) {
-                          localStorage.removeItem(`panas-${type}-${i}`);
-                      }
-                      localStorage.removeItem(`panas-${type}-answers`); */
-                    navigate("/");
+                    // Se la richiesta ha avuto successo (200-299), consideriamo i dati salvati
+                    if (response.ok && !(body['status'] && body['status'].toUpperCase() === "ERROR")) {
+                        const responseBody = body;
+                        addLog("Registrazione completata: " + responseBody);
+                        navigate("/fine-seconda-parte-registrazione");
+                    }
+                    else
+                        throw new Error(body['message']);
                 } catch (error) {
-                    console.error("Errore invio PANAS finale:", error);
-                    alert("❌ Errore durante l'invio del questionario. Riprova.");
+                    addLog("Errore invio PANAS finale:" + error.message, "error");
+                    // Mostra errore con possibilità di riprovare
+                    if (error.name === 'AbortError') {
+                        setSubmitError("⏱️ Il server sta impiegando troppo tempo. Riprova o controlla se i dati sono stati salvati.");
+                    } else {
+                        setSubmitError("❌ Errore durante l'invio. Verifica la connessione e riprova.");
+                    }
+                    setIsSubmitting(false);
                 }
-            } else {
-                // Solo salvataggio locale per type === "iniziale"
-                navigate("/hexaco-introduzione");
             }
         }
     };
+
+    useEffect(() => {
+        const key = `panas-${type}-${currentQuestionIndex + 1}`;
+        const savedValue = safeStorage.getItem(key);
+        if (savedValue !== null) {
+            setValue(parseInt(savedValue, 10));
+        } else {
+            setValue(null);
+        }
+    }, [questionNumber]);
 
     //funzione per tornare alla pagina precedente
     const handleBack = () => {
@@ -133,27 +137,18 @@ function PANAS() {
     const handleSliderChange = (event, newValue) => {
         setValue(newValue);
         const key = `panas-${type}-${currentQuestionIndex + 1}`;
-        localStorage.setItem(key, newValue);
+        safeStorage.setItem(key, newValue);
         //crea un nuovo oggetto con tutte le proprietà di prev e aggiorna la proprietà chiave con il nuovo valore
         setAnswer(prev => ({
             ...prev, //copia tutte le coppie chiave-valore di prev
             [key]: newValue, //aggiunge una nuova coppia chiave-valore, le parentesi quadre permettono di usare il valore della chiave come nome della proprietà
         }));
-        console.log(`Domanda ${currentQuestionIndex + 1} (${type}) → Valore selezionato: ${newValue}`)
     };
-
-    if (isSubmitting) {
-        return (
-            <div>
-                <p>⏳ <strong>Stiamo inviando le tue risposte al questionario, non chiudere l&apos;applicazione...</strong></p>
-            </div>
-        );
-    }
 
     return (
         <div>
             <div className="arrow-left">
-                <Button variant="outlined" onClick={handleBack}>{/* ← */}<WestSharpIcon /></Button>
+                <Button variant="outlined" onClick={handleBack}>  <WestSharpIcon /></Button>
             </div>
             <h3 className="header-questionari">Quanto questo aggettivo descrive ciò che hai provato nelle ultime settimane?</h3>
             <p>Usa la seguente scala:</p>
@@ -206,9 +201,95 @@ function PANAS() {
                 <span className="active-question-number">{currentQuestionIndex + 1}</span>
                 <span className="total-question"> su {panas.pages.length}</span>
             </div>
-            <div className="arrow-right">
-                <Button variant="contained" disabled={value === null} onClick={handleNext}>{/* → */}<EastSharpIcon /></Button>
+            <div className="red">
+                <p>*completa tutti i campi prima di procedere.</p>
             </div>
+            <div className="arrow-right">
+                <Button variant="contained" disabled={value === null || isSubmitting} onClick={handleNext}> <EastSharpIcon /></Button>
+            </div>
+
+            <Snackbar
+                open={isSubmitting}
+                anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+                sx={{
+                    width: "100%",
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    transform: "none",
+                }}
+            >
+                <Alert
+                    icon={false}
+                    severity="info"
+                    sx={{
+                        width: "100%",
+                        textAlign: "center",
+                        p: "0 2px 38px 2px",
+                    }}
+                >
+                    <div
+                        style={{
+                            width: "100%",
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            justifyContent: "center",
+                        }}
+                    >
+                        <CircularProgress size={30} style={{ marginBottom: "4px" }} />
+                        <span>
+                            Stiamo inviando le tue risposte al questionario, non chiudere l'applicazione...
+                        </span>
+                    </div>
+                </Alert>
+            </Snackbar>
+
+            {/* Snackbar errore con bottone Riprova */}
+            <Snackbar
+                open={!!submitError}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                sx={{ width: '100%', left: 0, right: 0, bottom: 0, transform: 'none' }}
+            >
+                <Alert icon={false} severity="error" sx={{ width: '100%', textAlign: 'center', p: '16px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center' }}>
+                        <span><b>{submitError}</b></span>
+                        <div style={{ display: 'flex', gap: 8 }}>
+                            <Button
+                                variant="contained"
+                                size="small"
+                                onClick={async () => {
+                                    setIsSubmitting(true);
+                                    setSubmitError(null);
+                                    const payload = JSON.parse(safeStorage.getItem('dataPanas-finale') || '{}');
+                                    try {
+                                        const controller = new AbortController();
+                                        const t = setTimeout(() => controller.abort(), 25000);
+                                        const res = await fetch(config.salvataggio_panas_finale, {
+                                            method: 'POST', headers: { 'Content-Type': 'text/plain' }, body: JSON.stringify(payload), signal: controller.signal, redirect: 'follow'
+                                        });
+                                        clearTimeout(t);
+                                        if (res.ok) {
+                                            addLog("✅ PANAS salvato (retry)");
+                                            navigate('/fine-esperimento');
+                                        } else {
+                                            throw new Error(`Status ${res.status}`);
+                                        }
+                                    } catch (e) {
+                                        console.error('Retry PANAS:', e);
+                                        setSubmitError(e.name === 'AbortError' ? '⏱️ Timeout. Riprova o controlla se salvato.' : '❌ Errore invio. Verifica connessione.');
+                                    } finally {
+                                        setIsSubmitting(false);
+                                    }
+                                }}
+                            >
+                                Riprova
+                            </Button>
+                            <Button variant="outlined" size="small" onClick={() => setSubmitError(null)}>Chiudi</Button>
+                        </div>
+                    </div>
+                </Alert>
+            </Snackbar>
         </div>
     )
 }

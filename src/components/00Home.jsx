@@ -6,7 +6,6 @@ import config from '../../environment';
 import { resetQuestionario } from '../ResetQuestionario';
 import safeStorage from '../../safeStorage';
 import { addDebugLog, addLog } from '../logs';
-import { Browser } from "@capacitor/browser";
 
 function Home() {
     const [completatiOggi, setCompletatiOggi] = useState(0);

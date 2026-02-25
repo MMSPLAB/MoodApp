@@ -438,13 +438,13 @@ function Home() {
                                     index: i
                                 }));
                                 // salva metadati solo se validi
-                                addLog(JSON.stringify(images));
+                                addDebugLog(JSON.stringify(images));
                                 images.forEach(item => {
                                     safeStorage.setItem(`stimulusFile${item.index + 1}`, item.name);
                                     safeStorage.setItem(`stimulusURL${item.index + 1}`, item.url);
                                 });
-                                addLog("test");
-                                // precarica e salva data URL
+                                /*Precarimacento immagini rimosso perchè occupa troppo spazio
+
                                 /*const results = await Promise.allSettled(images.map(it => preloadImage(it.url, it.index)));
                                 addLog("test2");
                                 const ok = results.filter(r => r.status === 'fulfilled' && r.value.success).length;*/

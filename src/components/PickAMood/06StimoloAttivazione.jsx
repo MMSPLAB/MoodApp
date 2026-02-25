@@ -70,7 +70,7 @@ function StimoloAttivazione() {
           }, 30 * 1000);
           return () => clearTimeout(timer);
         }
-      }, [finalImageUrl])
+      }, [stimulusOrder]);
     
 
     //recuperare dal locale attivazione e valenza salvati
@@ -132,7 +132,7 @@ function StimoloAttivazione() {
             }
 
             const controller = new AbortController();
-            const t = setTimeout(() => controller.abort(), 10000);
+            const t = setTimeout(() => controller.abort(), 13000);
             const res = await fetch(u, { signal: controller.signal, mode: 'cors', credentials: 'omit', redirect: 'follow' });
             clearTimeout(t);
             if (!res.ok) {

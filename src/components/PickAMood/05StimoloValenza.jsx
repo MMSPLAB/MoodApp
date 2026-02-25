@@ -151,7 +151,7 @@ function StimoloValenza() {
       }
 
       const controller = new AbortController();
-      const t = setTimeout(() => controller.abort(), 10000);
+      const t = setTimeout(() => controller.abort(), 13000);
       const res = await fetch(u, { signal: controller.signal, mode: 'cors', credentials: 'omit', redirect: 'follow' });
       clearTimeout(t);
       if (!res.ok) {

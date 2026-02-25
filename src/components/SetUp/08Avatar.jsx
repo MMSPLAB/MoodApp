@@ -5,9 +5,9 @@ import WestSharpIcon from '@mui/icons-material/WestSharp';
 import EastSharpIcon from '@mui/icons-material/EastSharp';
 
 const avatars = [
-  { id: 'female', value: 'avatarFemale', source: "/immaginiAvatar/avatarFemale.png" },
-  { id: 'robot', value: 'avatarRobot', source: "/immaginiAvatar/avatarRobot.png" },
-  { id: 'male', value: 'avatarMale', source: "/immaginiAvatar/avatarMale.png" }
+  { id: 'female', value: 'avatarFemale', source: "MoodApp/immaginiAvatar/singleimages_female-0-CHOOSE.png" },
+  { id: 'robot', value: 'avatarRobot', source: "MoodApp/immaginiAvatar/singleimages_robot-0-CHOOSE.png" },
+  { id: 'male', value: 'avatarMale', source: "MoodApp/immaginiAvatar/singleimages_male-0-CHOOSE.png" }
 ]
 
 function SceltaAvatar() {

@@ -82,7 +82,7 @@ function PickAMood() {
                                 }}
                             >
                                 <img
-                                    src={mood.image}
+                                    src={`MoodApp${mood.image}`}
                                     alt={mood.alt}
                                     style={{
                                         width: "90%",

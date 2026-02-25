@@ -24,7 +24,10 @@ function MoodIntensity() {
             </div>
             <h3 className="maiuscolo">{mood.title}</h3>
             <div className="mood-intensity-img">
-                <img src={mood.image} alt={mood.alt} />
+                <img src={`MoodApp${mood.image}`} alt={mood.alt} className="mood-image" />
+                <div className="mood-intensity-h3">
+                    <h3 className="blu-maiuscolo">Quanto reputi intenso l'umore selezionato?</h3>
+                </div>
             </div>
             <h3 className="blu-maiuscolo">
                 Quanto reputi intenso l'umore selezionato?

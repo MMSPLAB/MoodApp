@@ -373,27 +373,35 @@ function Home() {
 
                     // Preload data URL: fetch text response, validate, and cache
                     const preloadImage = async (src, index, timeout = 15000) => {
+                        addLog(src);
                         if (!src) return { success: false, reason: 'missing_url' };
                         try {
+                            addLog(`Preload immagine ${index + 1}: ${src}`);
                             const controller = new AbortController();
                             const timer = setTimeout(() => controller.abort(), timeout);
                             const cacheBuster = `${src}${src.includes('?') ? '&' : '?'}t=${Date.now()}`;
+                            addLog(`URL con cache buster: ${cacheBuster}`);
                             const res = await fetch(cacheBuster, { signal: controller.signal, mode: 'cors', credentials: 'omit' });
+                            addLog(`Risposta fetch: ${res.status}`);
                             clearTimeout(timer);
                             if (!res.ok) return { success: false, error: `HTTP ${res.status}` };
 
                             const contentType = res.headers.get('content-type') || '';
+                            addLog(`Content-Type: ${contentType}`);
                             if (contentType.includes('text/plain')) {
                                 // Data URL as text
                                 const dataUrl = await res.text();
                                 if (dataUrl && dataUrl.startsWith('data:')) {
                                     // Save data URL in cache for instant loading later
+                                    addLog(`Data URL ricevuto per immagine ${index + 1}, lunghezza: ${dataUrl.length}`);
                                     safeStorage.setItem(`stimulusDataURL${index + 1}`, dataUrl);
                                     return { success: true };
                                 }
+                                addLog(`Risposta text/plain non valida per immagine ${index + 1}: ${dataUrl?.slice(0, 100)}`, 'error');
                                 return { success: false, error: 'Invalid data URL' };
                             } else {
                                 // Regular image blob
+                                addLog(`Risposta non è text/plain, trattando come blob per immagine ${index + 1}`);
                                 const blob = await res.blob();
                                 return { success: blob && blob.size > 0 };
                             }
@@ -404,9 +412,7 @@ function Home() {
 
                     (async () => {
                         try {
-                            addLog('Fetching dati immagini...');
                             const fres = await fetchWithRetry(url);
-                            addLog(`Fetch risultato: ${fres.success ? 'successo' : 'fallito'}`);
                             let json;
                             if (!fres?.success) {
                                 addLog('Fetch fallito, provo JSONP...', 'warn');
@@ -442,7 +448,7 @@ function Home() {
                                 const results = await Promise.allSettled(images.map(it => preloadImage(it.url, it.index)));
                                 addLog("test2");
                                 const ok = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
-                                addLog(`Preload immagini completato: ${ok}/${results.length}`);
+                                addLog(`Preload immagini completato: ${ok}/${json.immagini.length}`);
                                 safeStorage.setItem('preloadDone', 'true');
                             } else {
                                 addLog('Stimoli errati dal server: '+ JSON.stringify(json), 'error');

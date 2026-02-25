@@ -406,6 +406,7 @@ function Home() {
                         try {
                             addLog('Fetching dati immagini...');
                             const fres = await fetchWithRetry(url);
+                            addDebugLog(`Fetch risultato: ${fres.success ? 'successo' : 'fallito'}`);
                             let json;
                             if (!fres?.success) {
                                 addLog('Fetch fallito, provo JSONP...', 'warn');
@@ -414,6 +415,7 @@ function Home() {
                                 json = j.data;
                             } else {
                                 json = fres.data;
+                                addDebugLog(JSON.stringify(json)); 
                             }
 
                             if (
@@ -430,12 +432,15 @@ function Home() {
                                     index: i
                                 }));
                                 // salva metadati solo se validi
+                                addDebugLog(JSON.stringify(images));
                                 images.forEach(item => {
                                     safeStorage.setItem(`stimulusFile${item.index + 1}`, item.name);
                                     safeStorage.setItem(`stimulusURL${item.index + 1}`, item.url);
                                 });
+                                addDebugLog("test");
                                 // precarica e salva data URL
                                 const results = await Promise.allSettled(images.map(it => preloadImage(it.url, it.index)));
+                                addDebugLog("test2");
                                 const ok = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
                                 addLog(`Preload immagini completato: ${ok}/${results.length}`);
                                 safeStorage.setItem('preloadDone', 'true');
@@ -446,6 +451,11 @@ function Home() {
                             addLog(`Errore critico preload: ${e?.message || e}`, 'error');
                         }
                     })();
+                }
+                else { 
+                    addLog("Dati utente mancanti, impossibile avviare preload", "error");
+                    safeStorage.clear(); // pulisce tutto per evitare stati incoerenti e forzare nuovo inserimento dati
+                    navigate("/user-ID")
                 }
             } else {
                 addLog("Preload già avviato in questa fascia")

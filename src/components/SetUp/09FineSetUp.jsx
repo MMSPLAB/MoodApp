@@ -6,22 +6,20 @@ import EastSharpIcon from '@mui/icons-material/EastSharp';
 
 function FineSetUp() {
     const navigate = useNavigate();
-    localStorage.setItem("setupDate", new Date().toLocaleDateString('it-IT'));    
-
+    localStorage.setItem("setupDate", new Date().toLocaleDateString('it-IT'));
+    
     return (
         <div>
             <div className="arrow-left">
-                <Button variant="outlined" onClick={() => navigate("/scelta-avatar")}>   <WestSharpIcon /> </Button>
+                <Button variant="outlined" onClick={() => navigate("/scelta-avatar")}> {/* ← */}<WestSharpIcon /> </Button>
             </div>
-            <div className="contenitore-testo">
-                <h1 className="header-questionari">Hai completato la prima parte della registrazione.</h1>
-                <p>
-                    Nei prossimi passaggi, ti presenteremo due diversi questionari. Non ti preoccupare, non dovrai rifarli ogni giorno!<br /><br />
-                    Non esistono risposte giuste o sbagliate. Quello che ci interessa è la tua personale opinione ed esperienza.
-                </p>
-            </div>
+            <h1>Hai completato la prima parte della registrazione.</h1>
+            <p>
+                Nei prossimi passaggi, ti presenteremo due diversi questionari. Non ti preoccupare, non dovrai rifarli ogni giorno!<br /><br />
+                Non esistono risposte giuste o sbagliate. Quello che ci interessa è la tua personale opinione ed esperienza.
+            </p>
             <div className="arrow-right">
-                <Button variant="contained" onClick={() => navigate("/panas-introduzione")}> <EastSharpIcon /></Button>
+                <Button variant="contained" onClick={() => navigate("/panas-introduzione")}>{/* → */}<EastSharpIcon /></Button>
             </div>
         </div>
     )

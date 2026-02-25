@@ -1,4 +1,4 @@
-package com.example.localapp;
+package com.example.moodapp;
 
 import com.getcapacitor.BridgeActivity;
 

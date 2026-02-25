@@ -3,36 +3,20 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router";
 import singoliMood from "../../assets/singoliMood.json";
 import WestSharpIcon from '@mui/icons-material/WestSharp';
-import useQuestionarioTimer from "../../TimerQuestionario";
-import { addLog } from "../../logs"
-import safeStorage from "../../../safeStorage";
 
 function PickAMood() {
     const [savedAvatar, setSavedAvatar] = useState("");
     const [moods, setMoods] = useState({});
     const navigate = useNavigate();
 
-    useQuestionarioTimer();
-
-    const now = new Date();
-    const orario = now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
-    safeStorage.setItem('orarioInizioMood', orario);
-
     useEffect(() => {
-        if (!safeStorage.getItem("userID")) {
-            addLog("userID non trovato in PickAMood", "error");
-            safeStorage.clear()
-            navigate("/user-ID")
-        }
-
-        const savedAvatar = safeStorage.getItem("selectedAvatar");
+        const savedAvatar = localStorage.getItem("selectedAvatar");
+        console.log("Avatar salvato:", savedAvatar);
         if (savedAvatar && singoliMood[savedAvatar]) {
             setSavedAvatar(savedAvatar);
             setMoods(singoliMood[savedAvatar]);
         } else {
-            addLog("Avatar non valido in PickAMood", "error");
-            safeStorage.clear()
-            navigate("/user-ID")
+            console.warn("Avatar non valido o non trovato.");
         }
     }, []);
 
@@ -41,21 +25,21 @@ function PickAMood() {
     }
 
     const moodAngles = {
-        n1: 112, // in basso a sinistra
+        n1: 247, // in alto a sx
         p1: 292, // in alto a dx
-        n2: 155, // in mezzo basso sx
-        p2: 335, // in mezzo alto dx
-        n3: 202, // in mezzo alto sx
-        p3: 23,  // in mezzo basso dx
-        n4: 247, // in alto a sx  
+        n2: 112, // in basso a sinistra
+        p2: 340, // in mezzo alto dx
+        n3: 155, // in mezzo basso sx
+        p3: 20,  // in mezzo basso dx
+        n4: 202, // in mezzo alto sx
         p4: 67,  // in basso dx
     };
 
     /* const radius = 150; // raggio del cerchio */
 
     const radius = 110; // raggio più piccolo
-    const centerX = 145;
-    const centerY = 145;
+    const centerX = 150;
+    const centerY = 150;
     return (
         <div>
             <div className="arrow-left">
@@ -82,15 +66,15 @@ function PickAMood() {
                                 variant="text"
                                 className="mood-button"
                                 onClick={() => {
-                                    safeStorage.setItem("selectedMood", mood.alt);
+                                    localStorage.setItem("selectedMood", mood.alt);
                                     navigate(`/mood/${savedAvatar}/${moodId}`);
                                 }}
                                 style={{
                                     position: "absolute",
                                     left: x,
                                     top: y,
-                                    width: 110,
-                                    height: 110,
+                                    width: 100,
+                                    height: 100,
                                     padding: 0,
                                     borderRadius: "50%",
                                     transform: `rotate(-${angle}deg)`, // ruota immagine per mantenerla dritta

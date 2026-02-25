@@ -448,7 +448,7 @@ function Home() {
                                 /*const results = await Promise.allSettled(images.map(it => preloadImage(it.url, it.index)));
                                 addLog("test2");
                                 const ok = results.filter(r => r.status === 'fulfilled' && r.value.success).length;*/
-                                addLog(`Preload immagini completato: ${ok}/${json.immagini.length}`);
+                                addLog(`Preload immagini completato`)// //${ok}/${json.immagini.length}`);
                                 safeStorage.setItem('preloadDone', 'true');
                             } else {
                                 addLog('Stimoli errati dal server: '+ JSON.stringify(json), 'error');

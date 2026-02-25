@@ -6,9 +6,9 @@ import EastSharpIcon from '@mui/icons-material/EastSharp';
 import safeStorage from "../../../safeStorage";
 
 const avatars = [
-  { id: 'female', value: 'avatarFemale', source: "/immaginiAvatar/singleimages_female-0-CHOOSE.png" },
-  { id: 'robot', value: 'avatarRobot', source: "/immaginiAvatar/singleimages_robot-0-CHOOSE.png" },
-  { id: 'male', value: 'avatarMale', source: "/immaginiAvatar/singleimages_male-0-CHOOSE.png" }
+  { id: 'female', value: 'avatarFemale', source: "MoodApp/immaginiAvatar/singleimages_female-0-CHOOSE.png" },
+  { id: 'robot', value: 'avatarRobot', source: "MoodApp/immaginiAvatar/singleimages_robot-0-CHOOSE.png" },
+  { id: 'male', value: 'avatarMale', source: "MoodApp/immaginiAvatar/singleimages_male-0-CHOOSE.png" }
 ]
 
 function SceltaAvatar() {

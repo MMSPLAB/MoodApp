@@ -14,7 +14,7 @@ function NotFound() {
                 <h3 className="maiuscolo">Pagina non trovata</h3>
             </div>
             <div>
-                <img src={mood.image} alt={mood.alt} className="mood-image" />
+                <img src={`MoodApp${mood.image}`} alt={mood.alt} className="mood-image" />
             </div>
             <p>Sembra che questa pagina non esista</p>
             <div className='bottone-home'>

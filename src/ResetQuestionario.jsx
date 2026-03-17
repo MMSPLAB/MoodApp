@@ -1,5 +1,5 @@
 import safeStorage from "../safeStorage";
-
+import { clearDB } from "./imageDB";
 
 export function resetQuestionario(all = false) {
     // Reset dati di valutazione stimoli
@@ -22,6 +22,8 @@ export function resetQuestionario(all = false) {
         safeStorage.removeItem("preloadDone");
         safeStorage.removeItem("preloadAlreadyLaunched");
         safeStorage.removeItem("preloadStartedAt")
+
+        clearDB();
     }
 
     for (let i = 1; i <= 10; i++) {
@@ -32,7 +34,6 @@ export function resetQuestionario(all = false) {
         if (all) {
             safeStorage.removeItem(`stimulusFile${i}`);
             safeStorage.removeItem(`stimulusURL${i}`);
-            safeStorage.removeItem(`stimulusDataURL${i}`)
         }
     }
     // Reset intensità

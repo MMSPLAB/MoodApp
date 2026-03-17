@@ -96,7 +96,7 @@ function PANAS() {
                     if (response.ok && !(body['status'] && body['status'].toUpperCase() === "ERROR")) {
                         const responseBody = body;
                         addLog("Registrazione completata: " + responseBody);
-                        navigate("/fine-seconda-parte-registrazione");
+                        navigate("/fine-esperimento");
                     }
                     else
                         throw new Error(body['message']);

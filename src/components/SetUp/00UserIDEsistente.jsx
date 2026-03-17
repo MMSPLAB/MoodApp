@@ -102,8 +102,10 @@ function UserIDEsistente() {
                     var count = (data.fasce.match(/true/g) || []).length;
                     safeStorage.setItem("completati", count.toString())
                 }
-                +
-                    safeStorage.setItem('hasVisited', 'true');
+                if (data.panas && data.panas == "Completato")
+                    safeStorage.setItem("panasFinaleCompletato", "true");
+
+                safeStorage.setItem('hasVisited', 'true');
 
                 // snackbar success breve, poi navigate
                 setSnackbarMessage('Dati trovati. Reindirizzamento…');

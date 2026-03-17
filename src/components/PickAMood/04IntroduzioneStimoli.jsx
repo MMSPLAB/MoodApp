@@ -269,20 +269,10 @@ function IntroduzionePickAMood() {
                 </ul>
                 <p>Non ti preoccupare, potrai accedere a queste informazioni da ogni schermata di valutazione.</p>
             </div>
-            {/*
-            <div className="arrow-right">
-                {!preloadDone && (
-                    <p style={{ color: 'red', marginBottom: '8px' }}>
-                        *Preload in completamento, attendere qualche secondo
-                    </p>
-                )}
-                <Button variant="contained" disabled={!preloadDone} onClick={() => navigate("/stimolo-valenza/1")}><EastSharpIcon /></Button>
-            </div>
-            */}
 
 
             <div className="arrow-right">
-                <Button variant="contained" disabled={loading || retrying || timedOut || offline} onClick={() => navigate("/stimolo-valenza/1")}>
+                <Button variant="contained" disabled={loading || retrying || timedOut || offline} onClick={() => navigate("/stimolo/1")}>
                     <EastSharpIcon />
                 </Button>
             </div>

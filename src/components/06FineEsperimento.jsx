@@ -3,12 +3,16 @@ import { Button } from '@mui/material';
 import { useNavigate } from 'react-router';
 import { Capacitor } from '@capacitor/core';
 
+import safeStorage from "../../safeStorage";
+import config from "../../environment";
+
 function FineEsperimento() {
     const navigate = useNavigate();
 
     useEffect(() => {
         // Pulizia payload dopo invio riuscito (siamo nella pagina "Fine" quindi PANAS finale salvato con successo)
-        localStorage.removeItem("dataPanas-finale");
+        safeStorage.removeItem("dataPanas-finale");
+        safeStorage.setItem("panasFinaleCompletato", "true")
     }, []);
     const openExternal = async (url) => {
             if (Capacitor.isNativePlatform()) {

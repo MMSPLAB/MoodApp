@@ -29,9 +29,8 @@ import PickAMood from './components/PickAMood/00PickAMood.jsx';
 import MoodIntensity from './components/PickAMood/02MoodIntensity.jsx';
 import EsercizioFisico from './components/PickAMood/03EsercizioFisico.jsx';
 import IntroduzionePickAMood from './components/PickAMood/04IntroduzioneStimoli.jsx';
-import StimoloValenza from './components/PickAMood/05StimoloValenza.jsx';
-import StimoloAttivazione from './components/PickAMood/06StimoloAttivazione.jsx';
-import FinePickAMood from './components/PickAMood/07FineQuestionario.jsx';
+import ValutazioneStimolo from './components/PickAMood/05ValutazioneStimolo.jsx';
+import FinePickAMood from './components/PickAMood/06FineQuestionario.jsx';
 import NotFound from './components/404.jsx';
 
 import FineEsperimento from './components/06FineEsperimento.jsx';
@@ -64,8 +63,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="mood/:avatar/:moodId" element={<MoodIntensity />} />
           <Route path="esercizio-fisico" element={<EsercizioFisico />} />
           <Route path="intro-stimoli" element={<IntroduzionePickAMood />} />
-          <Route path="stimolo-valenza/:stimulusOrder" element={<StimoloValenza />} />
-          <Route path="stimolo-attivazione/:stimulusOrder" element={<StimoloAttivazione />} />
+          <Route path="stimolo/:stimulusOrder" element={<ValutazioneStimolo />} />
           <Route path="fine-pick-a-mood" element={<FinePickAMood />} />
 
           <Route path="/" element={<App />} />

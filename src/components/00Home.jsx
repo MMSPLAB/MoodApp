@@ -6,6 +6,7 @@ import config from '../../environment';
 import { resetQuestionario } from '../ResetQuestionario';
 import safeStorage from '../../safeStorage';
 import { addDebugLog, addLog } from '../logs';
+import { fetchSingleImage, fetchWithRetry, jsonpRequest } from '../Stimoli';
 import { Browser } from "@capacitor/browser";
 
 function Home() {
@@ -33,7 +34,7 @@ function Home() {
     const userID = safeStorage.getItem("userID");
     const avatar = safeStorage.getItem("selectedAvatar");
 
-    if(!userID || !avatar)
+    if (!userID || !avatar)
         navigate("/user-ID")
 
     // --- DEBUG: forzare abilitazione del pulsante temporaneamente ---
@@ -237,13 +238,13 @@ function Home() {
                 }
             }
 
-            if (activeNow && currentFasciaIndex !== null ) {
+            if (activeNow && currentFasciaIndex !== null) {
                 setIsActive(true);
                 setFasciaCorrenteIndex(currentFasciaIndex);
                 safeStorage.setItem("fasciaCorrenteIndex", currentFasciaIndex.toString());
                 setMinutesToNext(null);
                 setNextStartTime('');
-            } else{
+            } else {
                 setIsActive(false);
                 setFasciaCorrenteIndex(null);
                 safeStorage.removeItem("fasciaCorrenteIndex");
@@ -294,7 +295,7 @@ function Home() {
             return;
         }
 
-        if((!isActive || fasciaCorrenteIndex === null) && FORCE_ENABLE_QUESTIONARIO){
+        if ((!isActive || fasciaCorrenteIndex === null) && FORCE_ENABLE_QUESTIONARIO) {
             console.log("questionario forzato")
             setFasciaCorrenteIndex(3);
             setIsActive(true);
@@ -335,93 +336,18 @@ function Home() {
                     const url = `${baseUrl}?UserID=${encodeURIComponent(userID)}&Avatar=${encodeURIComponent(avatar)}`;
                     addDebugLog(`URL richiesta stimoli: ${url}`);
 
-                    // util: retry fetch con timeout
-                    const wait = (ms) => new Promise(r => setTimeout(r, ms));
-                    const fetchWithRetry = async (u, retries = 3) => {
-                        for (let i = 1; i <= retries; i++) {
-                            try {
-                                const controller = new AbortController();
-                                const t = setTimeout(() => controller.abort(), 15000);
-                                const res = await fetch(u, { signal: controller.signal, mode: 'cors', credentials: 'omit' });
-                                clearTimeout(t);
-                                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                                const data = await res.json();
-                                return { success: true, data };
-                            } catch (e) {
-                                addDebugLog(`fetch attempt ${i} failed: ${e?.message || e}`, 'warn');
-                                if (i === retries) return { success: false, error: e };
-                                await wait(1000 * i);
-                            }
-                        }
-                    };
-
-                    // JSONP fallback (Safari/CORS)
-                    const jsonpRequest = (u) => new Promise((resolve) => {
-                        const cb = `jsonp_${Date.now()}`;
-                        const script = document.createElement('script');
-                        let timer = setTimeout(() => { cleanup(); resolve({ success: false, error: new Error('JSONP timeout') }); }, 20000);
-                        function cleanup() {
-                            try { document.body.removeChild(script); } catch { }
-                            try { delete window[cb]; } catch { }
-                            clearTimeout(timer);
-                        }
-                        window[cb] = (json) => { cleanup(); resolve({ success: true, data: json }); };
-                        script.onerror = () => { cleanup(); resolve({ success: false, error: new Error('JSONP error') }); };
-                        script.src = `${u}&callback=${cb}`;
-                        document.body.appendChild(script);
-                    });
-
-                    // Preload data URL: fetch text response, validate, and cache
-                    const preloadImage = async (src, index, timeout = 15000) => {
-                        addLog(src);
-                        if (!src) return { success: false, reason: 'missing_url' };
-                        try {
-                            addLog(`Preload immagine ${index + 1}: ${src}`);
-                            const controller = new AbortController();
-                            const timer = setTimeout(() => controller.abort(), timeout);
-                            const cacheBuster = `${src}${src.includes('?') ? '&' : '?'}t=${Date.now()}`;
-                            addLog(`URL con cache buster: ${cacheBuster}`);
-                            const res = await fetch(cacheBuster, { signal: controller.signal, mode: 'cors', credentials: 'omit' });
-                            addLog(`Risposta fetch: ${res.status}`);
-                            clearTimeout(timer);
-                            if (!res.ok) return { success: false, error: `HTTP ${res.status}` };
-
-                            const contentType = res.headers.get('content-type') || '';
-                            addLog(`Content-Type: ${contentType}`);
-                            if (contentType.includes('text/plain')) {
-                                // Data URL as text
-                                const dataUrl = await res.text();
-                                if (dataUrl && dataUrl.startsWith('data:')) {
-                                    // Save data URL in cache for instant loading later
-                                    addLog(`Data URL ricevuto per immagine ${index + 1}, lunghezza: ${dataUrl.length}`);
-                                    safeStorage.setItem(`stimulusDataURL${index + 1}`, dataUrl);
-                                    return { success: true };
-                                }
-                                addLog(`Risposta text/plain non valida per immagine ${index + 1}: ${dataUrl?.slice(0, 100)}`, 'error');
-                                return { success: false, error: 'Invalid data URL' };
-                            } else {
-                                // Regular image blob
-                                addLog(`Risposta non è text/plain, trattando come blob per immagine ${index + 1}`);
-                                const blob = await res.blob();
-                                return { success: blob && blob.size > 0 };
-                            }
-                        } catch (e) {
-                            return { success: false, error: e?.message || e };
-                        }
-                    };
-
                     (async () => {
                         try {
+                            addLog('Fetching dati immagini...');
                             const fres = await fetchWithRetry(url);
                             let json;
                             if (!fres?.success) {
                                 addLog('Fetch fallito, provo JSONP...', 'warn');
                                 const j = await jsonpRequest(url);
-                                if (!j.success) throw new Error('Fetch e JSONP falliti');
+                                if (!j?.success) throw new Error('Fetch e JSONP falliti');
                                 json = j.data;
                             } else {
                                 json = fres.data;
-                                addLog(JSON.stringify(json)); 
                             }
 
                             if (
@@ -438,30 +364,22 @@ function Home() {
                                     index: i
                                 }));
                                 // salva metadati solo se validi
-                                addDebugLog(JSON.stringify(images));
                                 images.forEach(item => {
                                     safeStorage.setItem(`stimulusFile${item.index + 1}`, item.name);
                                     safeStorage.setItem(`stimulusURL${item.index + 1}`, item.url);
                                 });
-                                /*Precarimacento immagini rimosso perchè occupa troppo spazio
-
-                                /*const results = await Promise.allSettled(images.map(it => preloadImage(it.url, it.index)));
-                                addLog("test2");
-                                const ok = results.filter(r => r.status === 'fulfilled' && r.value.success).length;*/
-                                addLog(`Preload immagini completato`)// //${ok}/${json.immagini.length}`);
+                                // precarica e salva data URL
+                                const results = await Promise.allSettled(images.map(it => fetchSingleImage(it.url, it.index + 1)));
+                                const ok = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
+                                addLog(`Preload immagini completato: ${ok}/${results.length}`);
                                 safeStorage.setItem('preloadDone', 'true');
                             } else {
-                                addLog('Stimoli errati dal server: '+ JSON.stringify(json), 'error');
+                                addLog('Stimoli errati dal server: ' + JSON.stringify(json), 'error');
                             }
                         } catch (e) {
                             addLog(`Errore critico preload: ${e?.message || e}`, 'error');
                         }
                     })();
-                }
-                else { 
-                    addLog("Dati utente mancanti, impossibile avviare preload", "error");
-                    safeStorage.clear(); // pulisce tutto per evitare stati incoerenti e forzare nuovo inserimento dati
-                    navigate("/user-ID")
                 }
             } else {
                 addLog("Preload già avviato in questa fascia")
@@ -532,9 +450,21 @@ function Home() {
                         </div>
                     </div>
                     {faseQuestionario === 'terminato' ? (
-                        <div>
-                            <h2 className="testo-home">Grazie per aver completato l'esperimento </h2>
-                        </div>
+                        <>
+                            <div>
+                                <h2 className="testo-home">Grazie per aver completato l'esperimento </h2>
+
+                            </div>
+                            <p>Se non l'hai già fatto</p>
+                            <div className='bottone-home'>
+                                <div className='external-link'>
+                                    <Button variant="contained" onClick={() => openExternal(config.form_finale)}>
+                                        Compila il questionario di opinione generale
+                                    </Button>
+                                </div>
+                            </div>
+
+                        </>
                     ) : (
                         <div className='bottone-home'>
                             <Button variant='contained' disabled={bottoneDisabilitato} onClick={handleQuestionarioClick}>
@@ -544,7 +474,7 @@ function Home() {
                                         ? 'VAI ORA!'
                                         : FORCE_ENABLE_QUESTIONARIO
                                             ? 'Forza questionario'
-                                             : <>Prossimo questionario tra {prossimoOrario(minutesToNext)} ({nextStartTime})</>
+                                            : <>Prossimo questionario tra {prossimoOrario(minutesToNext)} ({nextStartTime})</>
                                 }
                             </Button>
                         </div>

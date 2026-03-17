@@ -8,14 +8,11 @@ import safeStorage from "../../../safeStorage";
 function Generality() {
 
     const [gender, setGender] = useState("");
-    const [savedGender, setSavedGender] = useState("");
     const [age, setAge] = useState("");
-    const [savedAge, setSavedAge] = useState("");
     const [istruzione, setIstruzione] = useState("");
-    const [savedIstruzione, setSavedIstruzione] = useState("");
     const [altro, setAltro] = useState("");
+    const [OS, setOS] = useState("");
     const [dispositivo, setDispositivo] = useState("");
-    const [savedDispositivo, setSavedDispositivo] = useState("");
 
     const [error, setError] = useState("");
 
@@ -24,7 +21,6 @@ function Generality() {
         const storedAge = safeStorage.getItem("Età");
         if (storedAge) {
             setAge(storedAge);
-            setSavedAge(storedAge);
         }
     }, []);
 
@@ -32,7 +28,6 @@ function Generality() {
         const storedGender = safeStorage.getItem("Genere");
         if (storedGender) {
             setGender(storedGender);
-            setSavedGender(storedGender);
         }
     }, []);
 
@@ -40,7 +35,6 @@ function Generality() {
         const storedIstruzione = safeStorage.getItem("Istruzione");
         if (storedIstruzione) {
             setIstruzione(storedIstruzione);
-            setSavedIstruzione(storedIstruzione);
         }
     }, []);
 
@@ -48,7 +42,13 @@ function Generality() {
         const storedDispositivo = safeStorage.getItem("Dispositivo");
         if (storedDispositivo) {
             setDispositivo(storedDispositivo);
-            setSavedDispositivo(storedDispositivo);
+        }
+    }, []);
+
+    useEffect(() => {
+        const storedOS = safeStorage.getItem("os");
+        if (storedOS) {
+            setOS(storedOS);
         }
     }, []);
 
@@ -91,6 +91,11 @@ function Generality() {
         setIstruzione(newIstruzione);
     }
 
+    const handleOSChange = (event) => {
+        const newOS = event.currentTarget.value;
+        setOS(newOS);
+    }
+
     const handleDispositivoChange = (event) => {
         const newDispositivo = event.currentTarget.value;
         setDispositivo(newDispositivo);
@@ -99,13 +104,16 @@ function Generality() {
     const saveAll = (event) => {
         //event.preventDefault(); //esigenze di Safari: non usiamo componente form
         safeStorage.setItem("Genere", gender);
-        setSavedGender(gender);
+        setGender(gender);
 
         safeStorage.setItem("Età", age);
-        setSavedAge(age);
+        setAge(age);
 
         safeStorage.setItem("Istruzione", istruzione);
         setIstruzione(istruzione);
+
+        safeStorage.setItem("os", OS);
+        setOS(OS);
 
         safeStorage.setItem("Dispositivo", dispositivo);
         setDispositivo(dispositivo);
@@ -165,9 +173,15 @@ function Generality() {
                         <div className="modello-telefono">
                             <h3>Dispositivo</h3>
                             <p>Quale dispositivo stai utilizzando?</p>
-                            <p><i>Specifica da quale dispositivo stai compilando questo questionario (ad esempio, scrivi la marca del tuo telefono).</i></p>
+                            <p><i>Specifica il tipo di dispositivo</i></p>
+                            <RadioGroup aria-labelledby="demo-error-radios" name="operative-system" value={OS} onChange={handleOSChange}>
+                                <FormControlLabel value="Android" control={<Radio />} label="Android" />
+                                <FormControlLabel value="iOS" control={<Radio />} label="Apple (iOS)" />
+                                <FormControlLabel value="Altro" control={<Radio />} label="Altro" />
+                            </RadioGroup>
+                            <p><i>Specifica il modello del dispositivo</i></p>
 
-                            <TextField required variant="outlined" placeholder="Marca dispositivo" value={dispositivo} name="Dispositivo" onChange={handleDispositivoChange} /> <br />
+                            <TextField required variant="outlined" placeholder="Modello dispositivo" value={dispositivo} name="Dispositivo" onChange={handleDispositivoChange} /> <br />
                         </div>
                         <br />
                         <div className="red">

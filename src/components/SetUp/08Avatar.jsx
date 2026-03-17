@@ -29,7 +29,6 @@ function SceltaAvatar() {
     selected.preventDefault();
     const selectedAvatar = selected.currentTarget.value;
     setSelectedAvatar(selectedAvatar); //qui invece dell'evento di per sé (selected), prendiamo solo il contenuto della variabile
-    console.log(selectedAvatar);
   }
 
   //salvare in locale l'avatar scelto

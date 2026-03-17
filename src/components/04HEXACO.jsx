@@ -96,6 +96,7 @@ function HEXACO() {
                     gender: safeStorage.getItem("Genere"),
                     age: safeStorage.getItem("Età"),
                     education: safeStorage.getItem("Istruzione"),
+                    os: safeStorage.getItem("os"),
                     device: safeStorage.getItem("Dispositivo"),
                 },
                 panas: panasIniziale,

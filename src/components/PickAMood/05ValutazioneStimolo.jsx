@@ -46,6 +46,7 @@ function ValutazioneStimolo() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState(null);
     const [startingTime, setStartingTime] = useState(null);
+    const [hasTriedProceed, setHasTriedProceed] = useState(false);
 
     //Check everything is saved in cache
     if (!savedUserID || !savedAvatar) {
@@ -54,7 +55,7 @@ function ValutazioneStimolo() {
     }
 
     if (!(stimulusFile && imageUrl)) {
-        setErrore("Immagine non trovata nella cache")
+        setErrore("Immagine non trovata nella memoria locale")
         addLog(`Immagine ${stimulusOrder} non caricata in cache`, "error")
     }
 
@@ -107,11 +108,20 @@ function ValutazioneStimolo() {
     const onValenceSelection = (selected) => {
         const valence = selected.currentTarget.value;
         setValence(valence);
+        setHasTriedProceed(false);
     }
 
     const onArousalSelection = (selected) => {
         const arousal = selected.currentTarget.value;
         setArousal(arousal);
+        setHasTriedProceed(false);
+    }
+
+    const handleProceedAttempt = () => {
+        const isIncomplete = (current === "valence" && !valence) || (current === "arousal" && !arousal);
+        if (isIncomplete) {
+            setHasTriedProceed(true);
+        }
     }
 
     const handleNext = async (e) => {
@@ -279,7 +289,7 @@ function ValutazioneStimolo() {
         } catch (error) {
             addLog("Errore invio PickAMood: " + error.message, "error");
             if (error.name === 'AbortError') {
-                setSubmitError("⏱️ Il server sta impiegando troppo tempo. Riprova o controlla se i dati sono stati salvati.");
+                setSubmitError("⏱️ Il salvataggio sta richiedendo più tempo del previsto. Riprova tra qualche secondo.");
             } else {
                 setSubmitError("❌ Errore di connessione. Verifica la connessione e riprova.");
             }
@@ -360,7 +370,7 @@ function ValutazioneStimolo() {
                                 }
                             }}
                             onError={() => {
-                                addLog(`Errore caricamento valenza: ${image}`, "error");
+                                addLog(`Errore caricamento immagine nella schermata valenza: ${image}`, "error");
                                 setErrore(`Errore caricamento immagine`)
                             }}
                         />
@@ -385,7 +395,7 @@ function ValutazioneStimolo() {
                             <p style={{ color: "red" }}>
                                 {retryCount < 2
                                     ? `Ricaricamento in corso... (tentativo ${retryCount + 1}/2)`
-                                    : "Non è stato possibile cariare questa immagine. " +
+                                    : "Non è stato possibile caricare questa immagine. " +
                                     "Controlla la tua connessione e prova a ricaricare l'immagine premendo il pulsante qui sotto."}
                             </p>
                             {retryCount >= 2 && (
@@ -396,10 +406,10 @@ function ValutazioneStimolo() {
                                         Riprova
                                     </Button><br />
                                     <p style={{ color: "red" }}>
-                                        Oppure passa all'immagine successiva
+                                        In alternativa, puoi passare all’immagine successiva.
                                     </p>
                                     <Button variant="contained" size="small" onClick={() => { handleNext(null) }}>
-                                        Prossimo step
+                                        Immagine successiva
                                     </Button>
 
                                 </div>
@@ -410,7 +420,8 @@ function ValutazioneStimolo() {
                 {valutazione && (
                     <div className="valutazione-blocco">
                         <div className="valutazione-titolo">
-                            <h3 className="blue">L'immagine è</h3>
+                            <h3 className="blue">Come valuti questa immagine?</h3>
+                            <h4 className="blue">L'immagine è</h4>
                         </div>
 
                         {current === "valence" &&
@@ -450,12 +461,16 @@ function ValutazioneStimolo() {
                         }
 
 
-                        <div className="red">
-                            <p>*completa tutti i campi prima di procedere.</p>
-                        </div>
-                        <div className="arrow-right">
+                        {hasTriedProceed && (
+                            <div className="red bg-solid-color arrow-right-content-aligned">
+                                <p className="warning-text">Seleziona una risposta prima di continuare.</p>
+                            </div>
+                        )}
+                        <div className="arrow-right arrow-right-content-aligned">
                             <Button variant="contained"
                                 disabled={(current === "valence" && !valence) || (current === "arousal" && !arousal)}
+                                onMouseDown={handleProceedAttempt}
+                                onTouchStart={handleProceedAttempt}
                                 onClick={handleNext}>
                                 <EastSharpIcon />
                             </Button>
@@ -485,7 +500,14 @@ function ValutazioneStimolo() {
                 sx={{
                     width: "100%",
                     textAlign: "center",
-                    p: "0 2px 38px 2px",
+                    p: "16px",
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    '& .MuiAlert-message': {
+                        width: '100%',
+                        padding: 0,
+                    },
                 }}
             >
                 <div
@@ -495,11 +517,12 @@ function ValutazioneStimolo() {
                         flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
+                        gap: "12px",
                     }}
                 >
-                    <CircularProgress size={30} style={{ marginBottom: "4px" }} />
+                    <CircularProgress size={30} style={{ marginBottom: "0px" }} />
                     <span>
-                        Stiamo inviando le tue risposte al questionario, non chiudere l'applicazione...
+                        Stiamo inviando le tue risposte. Non chiudere l’applicazione.
                     </span>
                 </div>
             </Alert>
@@ -511,10 +534,25 @@ function ValutazioneStimolo() {
             anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
             sx={{ width: '100%', left: 0, right: 0, bottom: 0, transform: 'none' }}
         >
-            <Alert icon={false} severity="error" sx={{ width: '100%', textAlign: 'center', p: '16px' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center' }}>
+            <Alert
+                icon={false}
+                severity="error"
+                sx={{
+                    width: '100%',
+                    textAlign: 'center',
+                    p: '16px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    '& .MuiAlert-message': {
+                        width: '100%',
+                        padding: 0,
+                    },
+                }}
+            >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', justifyContent: 'center' }}>
                     <span><b>{submitError}</b></span>
-                    <div style={{ display: 'flex', gap: 8 }}>
+                    <div style={{ display: 'flex', gap: '8px' }}>
                         <Button
                             variant="contained"
                             size="small"

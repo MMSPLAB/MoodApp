@@ -234,18 +234,17 @@ function IntroduzionePickAMood() {
     }, []);
 
     return (
-        <div>
-            <div className="arrow-left">
+        <div className="content-box">
+            <div className="arrow-left arrow-left-content-aligned">
                 <Button variant="outlined" onClick={() => navigate("/esercizio-fisico")}> <WestSharpIcon sx={{ color: '#005DD3' }} /> </Button>
             </div>
             <div className="intro-stimoli contenitore-testo">
                 <h3 className="blu-maiuscolo">HAI COMPLETATO LA PRIMA PARTE DEL QUESTIONARIO</h3>
-                <p className="testo">Adesso ti chiederemo di valutare&nbsp;<span className='blue'>dieci immagini</span>&nbsp;in base al loro contenuto e alle sensazioni che esse suscitano.</p>
-                <p>Il tuo compito consiste nel guardare ogni immagine per indicare se per te l'immagine è: </p>
-                <ul>
-                    <li>
-                        <b>spiacevole/negativa o piacevole/positiva</b>
+                <p className="testo">Ora ti mostreremo &nbsp;<span className='blue'>dieci immagini</span>&nbsp;: dovrai valutarle in base al loro contenuto e alle sensazioni che esse suscitano.</p>
+                <p>Per ciascuna, indica: </p>
+                    <p>1. quanto la percepisci <b>spiacevole/negativa o piacevole/positiva</b>
                         , secondo le seguenti opzioni della scala di valenza (<span className='blue'>valence</span>)
+                        </p>
                         <ol>
                             <li>molto negativa</li>
                             <li>negativa</li>
@@ -253,11 +252,10 @@ function IntroduzionePickAMood() {
                             <li>positiva</li>
                             <li>molto positiva</li>
                         </ol>
-                    </li>
-                    <br />
-                    <li>
+                    <p>2. quanto la percepisci
                         <b>rilassante/calmante o eccitante/emozionante</b>
                         , secondo le seguenti opzioni della scala di attivazione (<span className='blue'>arousal</span>)
+                        </p>
                         <ol>
                             <li>molto calmante</li>
                             <li>calmante</li>
@@ -265,13 +263,12 @@ function IntroduzionePickAMood() {
                             <li>attivante</li>
                             <li>molto attivante</li>
                         </ol>
-                    </li>
-                </ul>
-                <p>Non ti preoccupare, potrai accedere a queste informazioni da ogni schermata di valutazione.</p>
+
+                <p>Potrai rivedere queste indicazioni in ogni schermata di valutazione.</p>
             </div>
 
 
-            <div className="arrow-right">
+            <div className="arrow-right arrow-right-content-aligned">
                 <Button variant="contained" disabled={loading || retrying || timedOut || offline} onClick={() => navigate("/stimolo/1")}>
                     <EastSharpIcon />
                 </Button>
@@ -295,7 +292,14 @@ function IntroduzionePickAMood() {
                     sx={{
                         width: "100%",
                         textAlign: "center",
-                        p: "0 2px 38px 2px",
+                        p: "16px",
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        '& .MuiAlert-message': {
+                            width: '100%',
+                            padding: 0,
+                        },
                     }}
                 >
                     <div
@@ -305,11 +309,12 @@ function IntroduzionePickAMood() {
                             flexDirection: "column",
                             alignItems: "center",
                             justifyContent: "center",
+                            gap: "12px",
                         }}
                     >
-                        <CircularProgress size={30} style={{ marginBottom: "4px" }} />
+                        <CircularProgress size={30} style={{ marginBottom: "0px" }} />
                         <span>
-                            Caricamento immagini in corso, attendi qualche secondo...
+                            Caricamento immagini in corso
                         </span>
                     </div>
                 </Alert>
@@ -321,9 +326,24 @@ function IntroduzionePickAMood() {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                 sx={{ width: "100%", left: 0, right: 0, bottom: 0, transform: "none" }}
             >
-                <Alert icon={false} severity="warning" sx={{ width: '100%', textAlign: 'center', p: '16px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
-                        <span><b>Connessione assente.</b></span>
+                <Alert
+                    icon={false}
+                    severity="warning"
+                    sx={{
+                        width: '100%',
+                        textAlign: 'center',
+                        p: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        '& .MuiAlert-message': {
+                            width: '100%',
+                            padding: 0,
+                        },
+                    }}
+                >
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', justifyContent: 'center' }}>
+                        <span><b>Problemi di connessione con i nostri server.</b></span>
                         <span style={{ fontSize: '0.9em' }}>Verifica la connessione internet, poi riprova a caricare le immagini.</span>
                         <Button variant="contained" size="small" onClick={retryPreload}>
                             Riprova
@@ -351,11 +371,18 @@ function IntroduzionePickAMood() {
                         width: "100%",
                         textAlign: "center",
                         p: "16px",
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        '& .MuiAlert-message': {
+                            width: '100%',
+                            padding: 0,
+                        },
                     }}
                 >
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', justifyContent: 'center' }}>
                         <span><b>Caricamento immagini non riuscito.</b></span>
-                        <span style={{ fontSize: '0.9em' }}>Verifica la connessione e riprova, oppure procedi comunque (le immagini si caricheranno una alla volta).</span>
+                        <span style={{ fontSize: '0.9em' }}>Verifica la connessione internet e riprova, oppure procedi comunque: le immagini saranno caricate durante la valutazione.</span>
                         <div style={{ display: 'flex', gap: '8px', marginTop: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
                             <Button variant="contained" size="small" onClick={retryPreload}>
                                 Riprova
@@ -389,7 +416,14 @@ function IntroduzionePickAMood() {
                     sx={{
                         width: "100%",
                         textAlign: "center",
-                        p: "0 2px 38px 2px",
+                        p: "16px",
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        '& .MuiAlert-message': {
+                            width: '100%',
+                            padding: 0,
+                        },
                     }}
                 >
                     <div
@@ -399,10 +433,11 @@ function IntroduzionePickAMood() {
                             flexDirection: "column",
                             alignItems: "center",
                             justifyContent: "center",
+                            gap: "12px",
                         }}
                     >
-                        <CircularProgress size={30} style={{ marginBottom: "4px" }} />
-                        <span>Nuovo tentativo di caricamento...</span>
+                        <CircularProgress size={30} style={{ marginBottom: "0px" }} />
+                        <span>Nuovo tentativo di caricamento delle immagini in corso.</span>
                     </div>
                 </Alert>
             </Snackbar>

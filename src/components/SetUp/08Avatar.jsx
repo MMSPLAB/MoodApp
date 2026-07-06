@@ -14,6 +14,7 @@ const avatars = [
 function SceltaAvatar() {
   //gestire l'avatar scelto
   const [selectedAvatar, setSelectedAvatar] = useState(""); //creo uno stato momentaneamente vuoto in formato stringa
+  const [hasTriedProceed, setHasTriedProceed] = useState(false);
 
   //recuperare dal locale l'avatar salvato
   //ho spostato lo useEffect qui sopra perché ricaricando la pagina l'avatar non rimaneva in memoria nel safeStorage se il recupero dell'avatar era dopo il salvataggio in locale
@@ -45,15 +46,23 @@ function SceltaAvatar() {
   )
 
   const navigate = useNavigate();
+  const isContinueDisabled = !selectedAvatar;
+
+  const handleProceedAttempt = () => {
+    if (isContinueDisabled) {
+      setHasTriedProceed(true);
+    }
+  };
 
   return (
-    <div>
-      <div className="arrow-left">
+    <div className="content-box avatar-page">
+      <div className="arrow-left arrow-left-content-aligned">
         <Button variant="outlined" onClick={() => navigate("/generalità")}>   <WestSharpIcon /> </Button>
       </div>
-      <div>
+      <div className="contenitore-testo">
         <div className="avatar-titolo">
-          <h1>Seleziona il tuo avatar</h1>
+          <h1>Scegli il tuo avatar</h1>
+          <p>Ti accompagnerà nelle prossime fasi dell’esperimento. Puoi scegliere quello che preferisci o ti rispecchia di più.</p>
         </div>
         <div className="avatar-scroll-wrapper">
           <div className="avatar-scroll-container">
@@ -61,11 +70,13 @@ function SceltaAvatar() {
           </div>
         </div>
       </div>
-      <div className="red">
-        <p>*completa tutti i campi prima di procedere.</p>
-      </div>
-      <div className="arrow-right">
-        <Button variant="contained" disabled={!selectedAvatar} onClick={() => navigate("/fine-prima-parte-registrazione")} > <EastSharpIcon /></Button>
+      {hasTriedProceed && isContinueDisabled && (
+        <div className="red bg-solid-color arrow-right-content-aligned">
+          <p className="warning-text">Per continuare, seleziona un avatar.</p>
+        </div>
+      )}
+      <div className="arrow-right arrow-right-content-aligned" onMouseDown={handleProceedAttempt} onTouchStart={handleProceedAttempt}>
+        <Button variant="contained" disabled={isContinueDisabled} onClick={() => navigate("/fine-prima-parte-registrazione")} > <EastSharpIcon /></Button>
       </div>
     </div>
   )

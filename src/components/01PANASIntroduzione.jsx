@@ -27,17 +27,16 @@ function PANASIntro() {
         }
     };
     return (
-        <div>
-            <div className="arrow-left">
+        <div className="content-box">
+            <div className="arrow-left arrow-left-content-aligned">
                 <PulsanteIndietro  finale = {hasVisited}/>
             </div>
             <div className="contenitore-testo">
-                <h1 className="header-questionari">Situazione generale del tuo umore</h1>
+                <h1>Situazione generale del tuo umore</h1>
                 <p>
-                    Nei prossimi passaggi ti saranno presentati diversi aggettivi che indicano diversi stati affettivi.<br /><br />
-                    Dovrai indicare con quale livello l'aggettivo rappresenta il tuo umore nell'ultimo periodo.&nbsp;
-                    <b>Quanto l'aggettivo descrive ciò che hai provato nelle ultime settimane?</b><br />
-                    <br />Dovrai usare la seguente scala:
+                    Nei prossimi passaggi troverai una serie di aggettivi che descrivono diversi stati affettivi.</p>
+                <p>
+                    Per ciascuno di essi, dovrai <b>indicare quanto l'aggettivo descrive il tuo umore nelle ultime settimane</b>, usando la seguente scala:
                 </p>
                 <ol className="custom-list">
                     <li>Per nulla</li>
@@ -46,9 +45,9 @@ function PANASIntro() {
                     <li>Abbastanza</li>
                     <li>Molto</li>
                 </ol>
-                <p>Non preoccuparti, la scala sarà presente anche nelle prossime schermate!</p>
+                <p>Non preoccuparti: la scala resterà visibile anche nelle schermate successive.</p>
             </div>
-            <div className="arrow-right">
+            <div className="arrow-right arrow-right-content-aligned">
                 <Button variant="contained" onClick={handleNextClick}> <EastSharpIcon /></Button>
             </div>
         </div>

@@ -418,33 +418,42 @@ function Home() {
     };
 
     return (
-        <div>
+        <div className='content-box'>
             {faseQuestionario === 'attesa' ? (
                 <div>
                     {dataInizio && (
                         <div className='countdown'>
                             <div>
-                                <span className='sottotitolo'>Inizio questionari:</span>
+                                <span className='sottotitolo'>I questionari giornalieri iniziano il</span>
                                 <span className='box'>{dataInizio.toLocaleDateString("it-IT")}</span>
                             </div>
                             <div>
-                                <span className='sottotitolo'>Mancano:</span>
+                                <span className='sottotitolo'>Quanto manca al via?</span>
                                 <span className='box'>{countdown}</span>
                             </div>
                         </div>
                     )}
                     <h2 className="testo-home">L’esperimento partirà a breve</h2>
+                    <p className="testo-home">
+                        Grazie per esserti registrato. Il monitoraggio giornaliero inizierà nella data indicata qui sopra.
+                        Riceverai una notifica all’orario che hai scelto.
+                    </p>
+                    <i className="testo-home">
+                        Non devi fare altro adesso: ti avviseremo noi quando sarà il momento.
+                    </i>
                 </div>
             ) : (
                 <>
                     <div className='contenitore-home'>
+                        <h1 className='testo-home'>MoodApp</h1>
+                        <h4 className='testo-home'>Questionari giornalieri completati</h4>
                         <div className='barra-info'>
                             <div className='session'>
                                 <span className='sottotitolo'>Oggi</span>
                                 {completatiOggi}/3
                             </div>
                             <div className='completed'>
-                                <span className='sottotitolo'>Completati</span>
+                                <span className='sottotitolo'>Totali</span>
                                 {completatiTotali}
                             </div>
                         </div>
@@ -452,10 +461,14 @@ function Home() {
                     {faseQuestionario === 'terminato' ? (
                         <>
                             <div>
-                                <h2 className="testo-home">Grazie per aver completato l'esperimento </h2>
+                                <h2 className="testo-home">Esperimento completato</h2>
+                                <h3 className="testo-home">Grazie per il tuo contributo!</h3>
 
                             </div>
-                            <p>Se non l'hai già fatto</p>
+                            <p className="testo-home">
+                                La settimana di questionari giornalieri è terminata. <br></br>
+                                Non devi fare altro adesso, ma se vuoi aiutarci ulteriormente puoi completare un breve questionario finale di opinione generale sull’esperienza.
+                            </p>
                             <div className='bottone-home'>
                                 <div className='external-link'>
                                     <Button variant="contained" onClick={() => openExternal(config.form_finale)}>
@@ -466,32 +479,41 @@ function Home() {
 
                         </>
                     ) : (
-                        <div className='bottone-home'>
-                            <Button variant='contained' disabled={bottoneDisabilitato} onClick={handleQuestionarioClick}>
-                                {faseQuestionario === 'panas'
-                                    ? 'Sessione conclusa: vai al PANAS'
-                                    : isActive
-                                        ? 'VAI ORA!'
-                                        : FORCE_ENABLE_QUESTIONARIO
-                                            ? 'Forza questionario'
-                                            : <>Prossimo questionario tra {prossimoOrario(minutesToNext)} ({nextStartTime})</>
-                                }
-                            </Button>
+                        <div>
+                            <h2 className="testo-home">Esperimento in corso</h2>
+                            <p>
+                                Completa fino a 3 sessioni al giorno nelle finestre orarie previste.
+                                Ogni sessione richiede pochi minuti.
+                            </p>
+                            <div className='bottone-home'>
+                                <Button variant='contained' disabled={bottoneDisabilitato} onClick={handleQuestionarioClick} size="large">
+                                    {faseQuestionario === 'panas'
+                                        ? 'Questionario finale per completare l’esperimento'
+                                        : isActive
+                                            ? 'Compila adesso il questionario'
+                                            : FORCE_ENABLE_QUESTIONARIO
+                                                ? 'Forza questionario'
+                                                : <>Prossimo questionario tra {prossimoOrario(minutesToNext)} ({nextStartTime})</>
+                                    }
+                                </Button>
+                            </div>
+                            <div className='links'>
+                                <div className='internal-link'>
+                                    <Button variant="text" onClick={() => navigate("/introduzione-esperimento", { state: { fromHome: true } })}>Introduzione esperimento</Button>
+                                </div>
+                                <div className='external-link'>
+                                    <Button variant="text" onClick={() => openExternal(config.istruzioni)}>
+                                        Istruzioni complete
+                                    </Button>
+                                </div>
+                            </div>
                         </div>
+                        
                     )}
                 </>
             )
             }
-            <div className='links'>
-                <div className='internal-link'>
-                    <Button variant="text" onClick={() => navigate("/introduzione-esperimento", { state: { fromHome: true } })}>Introduzione esperimento</Button>
-                </div>
-                <div className='external-link'>
-                    <Button variant="text" onClick={() => openExternal(config.istruzioni)}>
-                        Istruzioni esperimento su Google Drive
-                    </Button>
-                </div>
-            </div>
+            
         </div >
     );
 }

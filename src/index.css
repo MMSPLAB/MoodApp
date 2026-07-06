@@ -24,9 +24,6 @@ a:hover {
 }
 
 body {
-  margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -88,7 +85,11 @@ button:focus-visible {
   --input-bg: #1b1b1b;
   --input-fg: #f1f1f1;
   --input-border: #3a3a3a;
+  --accordion-bg: #1b2b3a;
 }
+.arrow-left, .arrow-right, .bg-solid-color {
+    background-color: #121212;
+  }
 
 /* Light palette overrides */
 @media (prefers-color-scheme: light) {
@@ -106,6 +107,63 @@ button:focus-visible {
     --input-bg: #ffffff;
     --input-fg: #111827;
     --input-border: #d1d5db;
+    --accordion-bg: #eaf3ff;
+  }
+  .arrow-left, .arrow-right, .bg-solid-color {
+    background-color: #ffffff;
+  }
+}
+
+/* Accordion styles (both light and dark mode) */
+.MuiAccordion-root {
+  background-color: var(--accordion-bg) !important;
+  border-radius: 4px !important;
+  overflow: hidden !important;
+  box-shadow: none !important;
+}
+
+.MuiAccordion-root:first-of-type {
+  border-top-left-radius: 4px !important;
+  border-top-right-radius: 4px !important;
+}
+
+.MuiAccordion-root:last-of-type {
+  border-bottom-left-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+}
+
+.MuiAccordionSummary-root,
+.MuiAccordionDetails-root {
+  background-color: transparent !important;
+}
+
+.MuiAccordionSummary-content,
+.MuiAccordionSummary-content .MuiTypography-root {
+  font-family: inherit !important;
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+}
+
+/* Dark palette fixes */
+@media (prefers-color-scheme: dark) {
+  .MuiAccordion-root {
+    color: rgba(255, 255, 255, 0.87) !important;
+  }
+
+  .MuiAccordionSummary-root {
+    color: rgba(255, 255, 255, 0.87) !important;
+  }
+
+  .MuiAccordionSummary-expandIconWrapper {
+    color: rgba(255, 255, 255, 0.7) !important;
+  }
+
+  .MuiAccordionDetails-root {
+    color: rgba(255, 255, 255, 0.87) !important;
+  }
+
+  .MuiAccordion-root::before {
+    background-color: rgba(255, 255, 255, 0.12) !important;
   }
 }
 
@@ -125,9 +183,32 @@ button:hover {
   border-color: var(--link);
 }
 
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+.MuiTypography-root,
+.MuiButton-root,
+.MuiInputBase-input,
+.MuiInputBase-input::placeholder,
+.MuiInputLabel-root,
+.MuiFormHelperText-root,
+.MuiFormControlLabel-label,
+.MuiSelect-select,
+.MuiMenuItem-root,
+.MuiAccordionSummary-content,
+.MuiAccordionSummary-content .MuiTypography-root,
+.MuiAccordionDetails-root {
+  font-family: inherit !important;
+}
+
 /* Improve Material UI button contrast regardless of variant */
 .MuiButton-root {
   color: var(--btn-fg);
+  font-family: inherit !important;
 }
 
 .MuiButton-contained {
@@ -167,6 +248,11 @@ button[disabled],
   color: var(--muted) !important;
 }
 
+.MuiInputBase-input,
+.MuiInputBase-input::placeholder {
+  font-family: inherit !important;
+}
+
 /* Inputs: ensure readable text and backgrounds in dark mode (iOS Safari safe) */
 input,
 textarea,
@@ -177,6 +263,7 @@ select,
   -webkit-text-fill-color: var(--input-fg);
   /* Safari/iOS */
   caret-color: var(--input-fg);
+  border-radius: inherit;
 }
 
 /* Placeholder contrast */

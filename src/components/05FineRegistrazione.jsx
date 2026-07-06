@@ -26,18 +26,19 @@ function FineRegistrazione() {
     }
 
     return (
-        <div>
-            <div className="arrow-left">
+        <div className="content-box">
+            <div className="arrow-left arrow-left-content-aligned">
                 <Button variant="outlined" onClick={() => navigate("/hexaco/60")}>    <WestSharpIcon /></Button>
             </div>
             <div className="contenitore-testo">
-                <h1 className="header-questionari">Hai completato la registrazione.</h1>
+                <h1>Hai completato la registrazione.</h1>
                 <p>
-                    Grazie mille! <br /><br />
-                    Tra una settimana inizierà il periodo di compilazione giornaliero.
+                    Tra una settimana inizieranno i questionari giornalieri. <br /><br />
+                    Riceverai una notifica per ogni nuovo questionario secondo l'orario da te scelto.<br /><br />
+                    <i>Le notifiche arriveranno tramite l'applicazione Fitrockr Sync, ma la compilazione avverrà qui, all'interno di MoodApp. Ti avvertiremo il giorno prima dell'inizio della settimana dei questionari giornalieri.</i>
                 </p>
             </div>
-            <div className="arrow-right">
+            <div className="arrow-right arrow-right-content-aligned">
                 <Button variant="contained" onClick={handleComplete}> <EastSharpIcon /></Button>
             </div>
         </div>

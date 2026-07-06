@@ -13,13 +13,13 @@ function FinePickAMood() {
     }, []);
 
     return (
-        <div>
+        <div className="content-box">
             <div className="fine-questionario-testo">
                 <h3 className="blu-maiuscolo">Hai completato il questionario!</h3>
-                <p>Torna alla home per vedere quando sarà disponibile il prossimo questionario</p>
+                <p>Torna alla pagina principale per scoprire quando sarà il prossimo questionario.</p>
             </div>
             <div className="bottom-button">
-                <Button variant="contained" className="button-fine-questionario" onClick={() => navigate("/")}>Torna alla home</Button>
+                <Button variant="contained" className="button-fine-questionario" onClick={() => navigate("/")}>Vai alla pagina principale</Button>
             </div>
         </div>
     )

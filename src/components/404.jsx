@@ -19,7 +19,7 @@ function NotFound() {
             <p>Sembra che questa pagina non esista</p>
             <div className='bottone-home'>
                 <Button variant='contained' onClick={() => { navigate("/") }}>
-                    Torna alla home
+                    Torna alla schermata principale
                 </Button>
             </div>
         </div>

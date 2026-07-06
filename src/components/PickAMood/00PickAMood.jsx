@@ -53,12 +53,11 @@ function PickAMood() {
 
     /* const radius = 150; // raggio del cerchio */
 
-    const radius = 110; // raggio più piccolo
-    const centerX = 145;
-    const centerY = 145;
+    const radiusPercent = 34;
+    const buttonSizePercent = 36;
     return (
-        <div>
-            <div className="arrow-left">
+        <div className="content-box">
+            <div className="arrow-left arrow-left-content-aligned">
                 <Button variant="outlined" onClick={() => navigate("/")}>
                     <WestSharpIcon sx={{ color: '#005DD3' }} />
                 </Button>
@@ -73,27 +72,28 @@ function PickAMood() {
 
                         // calcolo coordinate
                         const angleRad = (angle * Math.PI) / 180;
-                        const x = centerX + radius * Math.cos(angleRad) - 40;
-                        const y = centerY + radius * Math.sin(angleRad) - 40;
+                        const x = 50 + radiusPercent * Math.cos(angleRad);
+                        const y = 50 + radiusPercent * Math.sin(angleRad);
 
                         return (
                             <Button
                                 key={moodId}
                                 variant="text"
                                 className="mood-button"
+                                disableRipple
                                 onClick={() => {
                                     safeStorage.setItem("selectedMood", mood.alt);
                                     navigate(`/mood/${savedAvatar}/${moodId}`);
                                 }}
                                 style={{
                                     position: "absolute",
-                                    left: x,
-                                    top: y,
-                                    width: 110,
-                                    height: 110,
+                                    left: `${x}%`,
+                                    top: `${y}%`,
+                                    width: `${buttonSizePercent}%`,
+                                    height: `${buttonSizePercent}%`,
                                     padding: 0,
                                     borderRadius: "50%",
-                                    transform: `rotate(-${angle}deg)`, // ruota immagine per mantenerla dritta
+                                    transform: `translate(-50%, -50%) rotate(-${angle}deg)`, // posiziona al centro e ruota immagine per mantenerla dritta
                                     transformOrigin: "center"
                                 }}
                             >
@@ -101,8 +101,8 @@ function PickAMood() {
                                     src={mood.image}
                                     alt={mood.alt}
                                     style={{
-                                        width: "90%",
-                                        height: "90%",
+                                        width: "98%",
+                                        height: "98%",
                                         objectFit: "contain",
                                         transform: `rotate(${angle}deg)`, // cancella la rotazione del bottone
                                     }}

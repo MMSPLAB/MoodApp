@@ -12,7 +12,7 @@ function IstruzioniStimoli() {
     return (
         <div>
             {/* Pulsante info in alto a destra */}
-            <Tooltip title="Come valutare?" >
+            <Tooltip title="Come compilare?" >
                 <IconButton
                     onClick={() => setInfoOpen(true)}
                     sx={{ position: "absolute", top: 24, right: 8, zIndex: 1300 }}
@@ -31,7 +31,7 @@ function IstruzioniStimoli() {
                 maxWidth="sm"
             >
                 <DialogTitle>
-                    Come valutare le immagini
+                    <h3>Come valutare le immagini</h3>
                     <IconButton
                         aria-label="close"
                         onClick={() => setInfoOpen(false)}
@@ -41,19 +41,17 @@ function IstruzioniStimoli() {
                     </IconButton>
                 </DialogTitle>
                 <DialogContent dividers>
-                    <p>Nel guardare ogni immagine, valuta il loro contenuto e le sensazioni che esse suscitano.</p>
-                    <b>Per me l'immagine è:</b>
-                    <ul>
-                        <li>
-                            <b>spiacevole/negativa o piacevole/positiva</b>: <br />
-                            utilizza gli elementi della scala di valenza <span className='blue'>valence</span>.
-                        </li>
-                        <li>
-                            <b>rilassante/calmante o eccitante/emozionante</b>: <br />
-                            utilizza gli elementi della scala di attivazione <span className='blue'>arousal</span>.
-                        </li>
-                    </ul>
-                    <p>Puoi riaprire questa finestra in qualsiasi momento durante la valutazione.</p>
+                    <p>Osserva ogni immagine e valuta sia il contenuto sia le sensazioni che ti suscitano.</p>
+                    <b>Per ciascuna immagine indica se è:</b>
+                    <p>
+                        <b>spiacevole/negativa o piacevole/positiva</b>: <br />
+                        usa la scala di valenza / <span className='blue'>valence</span>.
+                    </p>
+                    <p>
+                        <b>rilassante/calmante o eccitante/emozionante</b>: <br />
+                        usa la scala di attivazione / <span className='blue'>arousal</span>.
+                    </p>
+                    <p>Puoi riaprire queste istruzioni in qualsiasi momento durante la valutazione.</p>
                 </DialogContent>
             </Dialog >
         </div>)

@@ -27,7 +27,7 @@ function FineEsperimento() {
         };
 
     return (
-        <div>
+        <div className="content-box">
             <div className="contenitore-testo">
                 <h1 className="blue">Grazie per la tua partecipazione.</h1>
                 <p>Sei giunto alla conclusione dell'esperimento di raccolta dati sul mood.<br/>
@@ -43,7 +43,7 @@ function FineEsperimento() {
                     </Button>
                 </div>
             </div>
-            <div className="button-fullwidth">
+            <div className="padding-top">
                 <Button fullWidth variant="outlined" onClick={() => navigate("/")}>Torna alla home</Button>
             </div>
         </div>

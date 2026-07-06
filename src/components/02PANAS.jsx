@@ -17,12 +17,20 @@ function PANAS() {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState(null);
+    const [hasTriedProceed, setHasTriedProceed] = useState(false);
 
     if (!type || (type !== "iniziale" && type !== "finale")) {
         navigate("/panas-introduzione");
     }
 
     const currentQuestionIndex = parseInt(questionNumber, 10) - 1;
+    const sliderMarks = [
+        { value: 1, label: '1' },
+        { value: 2, label: '2' },
+        { value: 3, label: '3' },
+        { value: 4, label: '4' },
+        { value: 5, label: '5' },
+    ];
 
     const [value, setValue] = useState(null);
     const [answer, setAnswer] = useState(() => {
@@ -117,6 +125,7 @@ function PANAS() {
     useEffect(() => {
         const key = `panas-${type}-${currentQuestionIndex + 1}`;
         const savedValue = safeStorage.getItem(key);
+        setHasTriedProceed(false);
         if (savedValue !== null) {
             setValue(parseInt(savedValue, 10));
         } else {
@@ -134,45 +143,105 @@ function PANAS() {
     };
 
     //salvare il valore dello slider selezionato
-    const handleSliderChange = (event, newValue) => {
+    const applySliderValue = (newValue) => {
         setValue(newValue);
+        setHasTriedProceed(false);
         const key = `panas-${type}-${currentQuestionIndex + 1}`;
         safeStorage.setItem(key, newValue);
-        //crea un nuovo oggetto con tutte le proprietà di prev e aggiorna la proprietà chiave con il nuovo valore
         setAnswer(prev => ({
-            ...prev, //copia tutte le coppie chiave-valore di prev
-            [key]: newValue, //aggiunge una nuova coppia chiave-valore, le parentesi quadre permettono di usare il valore della chiave come nome della proprietà
+            ...prev,
+            [key]: newValue,
         }));
     };
 
+    const handleSliderChange = (event, newValue) => {
+        //crea un nuovo oggetto con tutte le proprietà di prev e aggiorna la proprietà chiave con il nuovo valore
+        applySliderValue(newValue);
+    };
+
+    const handleProceedAttempt = () => {
+        if (value === null) {
+            setHasTriedProceed(true);
+        }
+    };
+
+    const handleSliderKeyDown = (event) => {
+        const numericValue = Number(event.key);
+        if (Number.isInteger(numericValue) && numericValue >= 1 && numericValue <= 5) {
+            event.preventDefault();
+            applySliderValue(numericValue);
+        }
+    };
+
+    useEffect(() => {
+        const handlePageKeyDown = (event) => {
+            const tagName = document.activeElement?.tagName;
+            const isTypingContext =
+                tagName === "INPUT" ||
+                tagName === "TEXTAREA" ||
+                document.activeElement?.isContentEditable;
+
+            if (isTypingContext) return;
+
+            if (event.code === "Enter" || event.code === "NumpadEnter") {
+                event.preventDefault();
+                if (value === null || isSubmitting) {
+                    setHasTriedProceed(true);
+                } else {
+                    handleNext();
+                }
+                return;
+            }
+
+            const code = event.code;
+            const map = {
+                Digit1: 1,
+                Digit2: 2,
+                Digit3: 3,
+                Digit4: 4,
+                Digit5: 5,
+                Numpad1: 1,
+                Numpad2: 2,
+                Numpad3: 3,
+                Numpad4: 4,
+                Numpad5: 5,
+            };
+
+            const numericValue = map[code];
+            if (numericValue) {
+                event.preventDefault();
+                applySliderValue(numericValue);
+            }
+        };
+
+        window.addEventListener("keydown", handlePageKeyDown);
+        return () => window.removeEventListener("keydown", handlePageKeyDown);
+    }, [type, currentQuestionIndex, value, isSubmitting]);
+
     return (
-        <div>
-            <div className="arrow-left">
+        <div className="content-box">
+            <div className="arrow-left arrow-left-content-aligned">
                 <Button variant="outlined" onClick={handleBack}>  <WestSharpIcon /></Button>
             </div>
-            <h3 className="header-questionari">Quanto questo aggettivo descrive ciò che hai provato nelle ultime settimane?</h3>
-            <p>Usa la seguente scala:</p>
-            <ol className="custom-list">
-                <li>Per nulla</li>
-                <li>Poco</li>
-                <li>Moderatamente</li>
-                <li>Abbastanza</li>
-                <li>Molto</li>
-            </ol>
-            <h3 className="blue header-questionari">{panas.pages[currentQuestionIndex].question}</h3>
+            <div className="contenitore-testo questionario-lungo">
+                <i className="blue-text">Situazione generale del tuo umore</i>
+                <h2 className="less-lineheight">Quanto questo aggettivo descrive ciò che hai provato nelle ultime settimane?</h2>
+            </div>
+
+            <h3 className="blue-text header-questionari">{panas.pages[currentQuestionIndex].question}</h3>
             <Box className="slider">
                 <Slider
                     value={value !== null ? value : 3}
                     onChange={handleSliderChange}
+                    onKeyDown={handleSliderKeyDown}
                     onClick={() => {
                         if (value === null) {
                             handleSliderChange(null, 3); // forza la selezione iniziale di 3
                         }
                     }}
-                    valueLabelDisplay="on"
                     shiftStep={1}
                     step={1}
-                    marks
+                    marks={sliderMarks}
                     min={1}
                     max={5}
                     sx={{
@@ -187,24 +256,42 @@ function PANAS() {
                         '& .MuiSlider-rail': {
                             backgroundColor: '#bdbdbd', // rail sempre visibile in grigio
                         },
-                        '& .MuiSlider-valueLabel': {
-                            backgroundColor: value === null ? '#bdbdbd' : '#1976d2',
-                            color: '#fff',
-                        },
+                        
                         '& .MuiSlider-mark': {
                             backgroundColor: value === null ? '#1976d2' : undefined, // blu se inattivo, default se attivo
+                        },
+                        '& .MuiSlider-markLabel': {
+                            color: '#8ab4f8',
+                            fontWeight: 600,
                         },
                     }}
                 />
             </Box>
+
+            <div className="contenitore-testo questionario-lungo">
+                <br></br>
+                <p>Usa la seguente scala:</p>
+                <ol className="custom-list">
+                    <li>Per nulla</li>
+                    <li>Poco</li>
+                    <li>Moderatamente</li>
+                    <li>Abbastanza</li>
+                    <li>Molto</li>
+                </ol>
+            </div>
+            <br></br>
+            
             <div className="numero-domanda">
+                <span>Aggettivo </span>
                 <span className="active-question-number">{currentQuestionIndex + 1}</span>
                 <span className="total-question"> su {panas.pages.length}</span>
             </div>
-            <div className="red">
-                <p>*completa tutti i campi prima di procedere.</p>
-            </div>
-            <div className="arrow-right">
+            {hasTriedProceed && value === null && (
+                <div className="red bg-solid-color arrow-right-content-aligned">
+                    <p className="warning-text">*Seleziona un valore dalla scala prima di procedere.</p>
+                </div>
+            )}
+            <div className="arrow-right arrow-right-content-aligned" onMouseDown={handleProceedAttempt} onTouchStart={handleProceedAttempt}>
                 <Button variant="contained" disabled={value === null || isSubmitting} onClick={handleNext}> <EastSharpIcon /></Button>
             </div>
 
@@ -221,11 +308,18 @@ function PANAS() {
             >
                 <Alert
                     icon={false}
-                    severity="info"
+                    severity="warning"
                     sx={{
                         width: "100%",
                         textAlign: "center",
-                        p: "0 2px 38px 2px",
+                        p: "16px",
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        '& .MuiAlert-message': {
+                            width: '100%',
+                            padding: 0,
+                        },
                     }}
                 >
                     <div
@@ -235,11 +329,12 @@ function PANAS() {
                             flexDirection: "column",
                             alignItems: "center",
                             justifyContent: "center",
+                            gap: "12px",
                         }}
                     >
-                        <CircularProgress size={30} style={{ marginBottom: "4px" }} />
+                        <CircularProgress size={30} style={{ marginBottom: "0px" }} />
                         <span>
-                            Stiamo inviando le tue risposte al questionario, non chiudere l'applicazione...
+                            Stiamo salvando i tuoi dati, non chiudere l'applicazione.
                         </span>
                     </div>
                 </Alert>
@@ -251,10 +346,25 @@ function PANAS() {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                 sx={{ width: '100%', left: 0, right: 0, bottom: 0, transform: 'none' }}
             >
-                <Alert icon={false} severity="error" sx={{ width: '100%', textAlign: 'center', p: '16px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center' }}>
+                <Alert
+                    icon={false}
+                    severity="error"
+                    sx={{
+                        width: '100%',
+                        textAlign: 'center',
+                        p: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        '& .MuiAlert-message': {
+                            width: '100%',
+                            padding: 0,
+                        },
+                    }}
+                >
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', justifyContent: 'center' }}>
                         <span><b>{submitError}</b></span>
-                        <div style={{ display: 'flex', gap: 8 }}>
+                        <div style={{ display: 'flex', gap: '8px' }}>
                             <Button
                                 variant="contained"
                                 size="small"
@@ -277,7 +387,7 @@ function PANAS() {
                                         }
                                     } catch (e) {
                                         console.error('Retry PANAS:', e);
-                                        setSubmitError(e.name === 'AbortError' ? '⏱️ Timeout. Riprova o controlla se salvato.' : '❌ Errore invio. Verifica connessione.');
+                                        setSubmitError(e.name === 'AbortError' ? '⏱️ Il salvataggio sta impiegando più tempo del previsto. Riprova o controlla se i dati sono stati salvati (contattando i ricercatori del progetto).' : '❌ Errore di invio dei tuoi dati. Verifica connessione.');
                                     } finally {
                                         setIsSubmitting(false);
                                     }

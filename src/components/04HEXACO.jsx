@@ -17,8 +17,16 @@ function HEXACO() {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitError, setSubmitError] = useState(null);
     const [dataRegistrazione, setDataRegistrazione] = useState("");
+    const [hasTriedProceed, setHasTriedProceed] = useState(false);
 
     const currentQuestionIndex = parseInt(questionNumber, 10) - 1;
+    const sliderMarks = [
+        { value: 1, label: '1' },
+        { value: 2, label: '2' },
+        { value: 3, label: '3' },
+        { value: 4, label: '4' },
+        { value: 5, label: '5' },
+    ];
 
     const [value, setValue] = useState(null);
     const [answer, setAnswer] = useState(() => { //questo stato viene aggiornato ogni volta
@@ -47,6 +55,7 @@ function HEXACO() {
     useEffect(() => {
         const key = `hexaco${currentQuestionIndex + 1}`;
         const savedValue = safeStorage.getItem(key);
+        setHasTriedProceed(false);
         if (savedValue !== null) {
             setValue(parseInt(savedValue, 10));
         } else {
@@ -68,7 +77,7 @@ function HEXACO() {
         } else {
             setDataRegistrazione(saveDataRegistrazione);
         }
-    })
+    }, [])
 
     const handleNext = async () => {
         const nextIndex = currentQuestionIndex + 1;
@@ -155,8 +164,9 @@ function HEXACO() {
         }
     };
 
-    const handleSliderChange = (event, newValue) => {
+    const applySliderValue = (newValue) => {
         setValue(newValue);
+        setHasTriedProceed(false);
         const key = `hexaco${currentQuestionIndex + 1}`;
         safeStorage.setItem(key, newValue);
         setAnswer(prev => ({
@@ -165,70 +175,140 @@ function HEXACO() {
         }));
     };
 
+    const handleSliderChange = (event, newValue) => {
+        applySliderValue(newValue);
+    };
+
+    const handleProceedAttempt = () => {
+        if (value === null) {
+            setHasTriedProceed(true);
+        }
+    };
+
+    const handleSliderKeyDown = (event) => {
+        const numericValue = Number(event.key);
+        if (Number.isInteger(numericValue) && numericValue >= 1 && numericValue <= 5) {
+            event.preventDefault();
+            applySliderValue(numericValue);
+        }
+    };
+
+    useEffect(() => {
+        const handlePageKeyDown = (event) => {
+            const tagName = document.activeElement?.tagName;
+            const isTypingContext =
+                tagName === "INPUT" ||
+                tagName === "TEXTAREA" ||
+                document.activeElement?.isContentEditable;
+
+            if (isTypingContext) return;
+
+            if (event.code === "Enter" || event.code === "NumpadEnter") {
+                event.preventDefault();
+                if (value === null || isSubmitting) {
+                    setHasTriedProceed(true);
+                } else {
+                    handleNext();
+                }
+                return;
+            }
+
+            const map = {
+                Digit1: 1,
+                Digit2: 2,
+                Digit3: 3,
+                Digit4: 4,
+                Digit5: 5,
+                Numpad1: 1,
+                Numpad2: 2,
+                Numpad3: 3,
+                Numpad4: 4,
+                Numpad5: 5,
+            };
+
+            const numericValue = map[event.code];
+            if (numericValue) {
+                event.preventDefault();
+                applySliderValue(numericValue);
+            }
+        };
+
+        window.addEventListener("keydown", handlePageKeyDown);
+        return () => window.removeEventListener("keydown", handlePageKeyDown);
+    }, [currentQuestionIndex, value, isSubmitting]);
+
     return (
         <>
-            <div>
-                <div className="arrow-left">
+            <div className="content-box hexaco-questionnaire">
+                <div className="arrow-left arrow-left-content-aligned">
                     <Button variant="outlined" onClick={handleBack}>  <WestSharpIcon /></Button>
                 </div>
-                <div className="contenitore-hexaco">
-                    <h3 className="header-questionari">Quanto sei d'accordo con l'affermazione seguente?</h3>
-                    <div className="lista-hexaco">
+                <div className="contenitore-testo questionario-lungo">
+                    <h2 className="less-lineheight">Quanto sei d'accordo con l'affermazione seguente?</h2>
+                </div>
+                <div className="hexaco-container">
+                    <h3 className="blue-text header-questionari less-lineheight">{hexaco.pages[currentQuestionIndex].question}</h3>
+                    <Box className="slider hexaco-slider-fixed">
+                        <Slider
+                            value={value !== null ? value : 3}
+                            onChange={handleSliderChange}
+                            onKeyDown={handleSliderKeyDown}
+                            onClick={() => {
+                                if (value === null) {
+                                    handleSliderChange(null, 3); // forza la selezione iniziale di 3
+                                }
+                            }}
+                            shiftStep={1}
+                            step={1}
+                            marks={sliderMarks}
+                            min={1}
+                            max={5}
+                            sx={{
+                                '& .MuiSlider-thumb': {
+                                    backgroundColor: value === null ? '#bdbdbd' : '#1976d2',
+                                    border: `2px solid ${value === null ? '#bdbdbd' : '#1976d2'}`,
+                                },
+                                '& .MuiSlider-track': {
+                                    backgroundColor: value === null ? 'transparent' : '#1976d2',
+                                    display: value === null ? 'none' : 'block', // nasconde la traccia se inattivo
+                                },
+                                '& .MuiSlider-rail': {
+                                    backgroundColor: '#bdbdbd', // rail sempre visibile in grigio
+                                },
+                                '& .MuiSlider-mark': {
+                                    backgroundColor: value === null ? '#1976d2' : undefined,
+                                },
+                                '& .MuiSlider-markLabel': {
+                                    color: '#8ab4f8',
+                                    fontWeight: 600,
+                                },
+                            }}
+                        />
+                    </Box>
+                </div>
+                <div className="hexaco-scale-fixed questionario-lungo">
                         <p>Usa la seguente scala:</p>
                         <ol className="custom-list">
                             <li>Completamente in disaccordo</li>
                             <li>Molto in disaccordo</li>
-                            <li>Nè d'accordo nè in disaccordo</li>
+                            <li>Né d'accordo né in disaccordo</li>
                             <li>Molto d'accordo</li>
                             <li>Completamente d'accordo</li>
                         </ol>
-                    </div>
                 </div>
-                <div className="hexaco">
-                    <h4 className="blue header-questionari">{hexaco.pages[currentQuestionIndex].question}</h4>
-                </div>
-                <Box className="slider-hexaco">
-                    <Slider
-                        value={value !== null ? value : 3}
-                        onChange={handleSliderChange}
-                        onClick={() => {
-                            if (value === null) {
-                                handleSliderChange(null, 3); // forza la selezione iniziale di 3
-                            }
-                        }}
-                        valueLabelDisplay="on"
-                        shiftStep={1}
-                        step={1}
-                        marks
-                        min={1}
-                        max={5}
-                        sx={{
-                            '& .MuiSlider-thumb': {
-                                backgroundColor: value === null ? '#bdbdbd' : '#1976d2',
-                                border: `2px solid ${value === null ? '#bdbdbd' : '#1976d2'}`,
-                            },
-                            '& .MuiSlider-track': {
-                                backgroundColor: value === null ? 'transparent' : '#1976d2',
-                                display: value === null ? 'none' : 'block', // nasconde la traccia se inattivo
-                            },
-                            '& .MuiSlider-rail': {
-                                backgroundColor: '#bdbdbd', // rail sempre visibile in grigio
-                            },
-                            '& .MuiSlider-valueLabel': {
-                                backgroundColor: value === null ? '#bdbdbd' : '#1976d2',
-                                color: '#fff',
-                            },
-                        }}
-                    />
-                </Box>
-                <div className="numero-domanda conteggio-hexaco">
+                
+                
+                <div className="numero-domanda">
+                    <span>Affermazione </span>
                     <span className="active-question-number">{currentQuestionIndex + 1}</span>
                     <span className="total-question"> su {hexaco.pages.length}</span><br /><br />
                 </div>
-                <div className="red">
-                    <p>*completa tutti i campi prima di procedere.</p>
-                </div>
-                <div className="arrow-right">
+                {hasTriedProceed && value === null && (
+                    <div className="red bg-solid-color arrow-right-content-aligned">
+                        <p className="warning-text">*Seleziona un valore dalla scala prima di procedere.</p>
+                    </div>
+                )}
+                <div className="arrow-right arrow-right-content-aligned" onMouseDown={handleProceedAttempt} onTouchStart={handleProceedAttempt}>
                     <Button variant="contained" disabled={value === null || isSubmitting} onClick={handleNext}> <EastSharpIcon /></Button>
                 </div>
             </div>
@@ -246,11 +326,18 @@ function HEXACO() {
             >
                 <Alert
                     icon={false}
-                    severity="info"
+                    severity="warning"
                     sx={{
                         width: "100%",
                         textAlign: "center",
-                        p: "0 2px 38px 2px",
+                        p: "16px",
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        '& .MuiAlert-message': {
+                            width: '100%',
+                            padding: 0,
+                        },
                     }}
                 >
                     <div
@@ -260,11 +347,12 @@ function HEXACO() {
                             flexDirection: "column",
                             alignItems: "center",
                             justifyContent: "center",
+                            gap: "12px",
                         }}
                     >
-                        <CircularProgress size={30} style={{ marginBottom: "4px" }} />
+                        <CircularProgress size={30} style={{ marginBottom: "0px" }} />
                         <span>
-                            Stiamo inviando le tue risposte al questionario, non chiudere l'applicazione...
+                            Stiamo salvando i tuoi dati, non chiudere l'applicazione.
                         </span>
                     </div>
                 </Alert>
@@ -276,10 +364,25 @@ function HEXACO() {
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                 sx={{ width: '100%', left: 0, right: 0, bottom: 0, transform: 'none' }}
             >
-                <Alert icon={false} severity="error" sx={{ width: '100%', textAlign: 'center', p: '16px' }}>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12, alignItems: 'center' }}>
+                <Alert
+                    icon={false}
+                    severity="error"
+                    sx={{
+                        width: '100%',
+                        textAlign: 'center',
+                        p: '16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        '& .MuiAlert-message': {
+                            width: '100%',
+                            padding: 0,
+                        },
+                    }}
+                >
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center', justifyContent: 'center' }}>
                         <span><b>{submitError}</b></span>
-                        <div style={{ display: 'flex', gap: 8 }}>
+                        <div style={{ display: 'flex', gap: '8px' }}>
                             <Button
                                 variant="contained"
                                 size="small"

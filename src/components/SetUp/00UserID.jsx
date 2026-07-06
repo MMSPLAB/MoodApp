@@ -9,14 +9,21 @@ function UserID() {
     resetQuestionario(true);
 
     return (
-        <div className="user-id">
-            <h1>Ciao.</h1>
-            <p>Eccoti nell'applicazione pensata per l'esperimento di raccolta dati sul mood.</p>
-            <p>Se ti sei registrato ma hai perso i dati, clicca su "Utente già registrato".</p>
-            <p>Se sei un nuovo utente procedi cliccando su "Nuovo utente".</p>
+        <div className="user-id content-box">
+            <h1>Ciao!</h1>
+            <h2>Benvenuto in MoodApp.</h2>
+            <p>Questa applicazione è stata progettata per monitorare il tuo umore nel tempo. </p>
+            <p>Con la tua partecipazione, ci aiuterai a migliorare la comprensione dell'umore e delle sue variazioni nel tempo.</p>
             <div className="scelta-ID">
-                <Button variant="contained" onClick={() => navigate("/user-ID-nuovo")}>Nuovo Utente</Button>
-                <Button variant="outlined" onClick={() => navigate("/user-ID-esistente")}>Utente già registrato</Button>
+                <Button variant="contained" onClick={() => navigate("/user-ID-nuovo")}>Non ho mai usato MoodApp</Button>
+                <Button variant="outlined" onClick={() => navigate("/user-ID-esistente")}>Ho già usato MoodApp</Button>
+            </div>
+            <br />
+            <br />
+            <div>
+                <i style={{ opacity: 0.6 }}>
+                    MoodApp è parte di un progetto di ricerca del <a href="https://mmsp.unimib.it/" target="_blank" rel="noopener noreferrer">laboratorio MMSP</a> dell'Università di Milano-Bicocca, 
+                    in collaborazione con il laboratorio Haptics and Virtual Prototyping del Politecnico di Milano.</i>
             </div>
         </div>
     )

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Button, TextField } from '@mui/material';
+import { Button, TextField, Accordion, AccordionSummary, AccordionDetails} from '@mui/material';
 import { Link, useNavigate } from 'react-router';
 import WestSharpIcon from '@mui/icons-material/WestSharp';
 import CircularProgress from "@mui/material/CircularProgress";
@@ -8,11 +8,15 @@ import Alert from "@mui/material/Alert";
 import config from "../../../environment";
 import { addLog } from "../../logs";
 import safeStorage from "../../../safeStorage";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+
 
 function UserIDEsistente() {
 
     const [userID, setUserID] = useState("");
     const [savedUserID, setSavedUserID] = useState("");
+    const [validID, setValidID] = useState(false);
+    const [hasStartedTyping, setHasStartedTyping] = useState(false);
 
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -24,6 +28,26 @@ function UserIDEsistente() {
     const [userNameErrato, setUserNameErrato] = useState(false);
 
     const navigate = useNavigate();
+    const handleMailClick = () => {
+        window.location.href = "mailto:claudia.rabaioli@unimib.it";
+    };
+    const regex = new RegExp("^(P|B)([0-2][0-9]|3[0-1])(0[1-9]|1[0-2])[A-Z][A-Z][0-9][0-9]$");
+
+    const partialIDRegexes = [
+        /^(P|B)$/,
+        /^(P|B)[0-3]$/,
+        /^(P|B)([0-2][0-9]|3[0-1])$/,
+        /^(P|B)([0-2][0-9]|3[0-1])[0-1]$/,
+        /^(P|B)([0-2][0-9]|3[0-1])(0[1-9]|1[0-2])$/,
+        /^(P|B)([0-2][0-9]|3[0-1])(0[1-9]|1[0-2])[A-Z]$/,
+        /^(P|B)([0-2][0-9]|3[0-1])(0[1-9]|1[0-2])[A-Z]{2}$/,
+        /^(P|B)([0-2][0-9]|3[0-1])(0[1-9]|1[0-2])[A-Z]{2}[0-9]$/,
+        /^(P|B)([0-2][0-9]|3[0-1])(0[1-9]|1[0-2])[A-Z]{2}[0-9]{2}$/
+    ];
+
+    const isPotentiallyValidID = userID === "" || partialIDRegexes.some((pattern) => pattern.test(userID));
+    const showIncompleteIDWarning = hasStartedTyping && userID !== "" && !validID && isPotentiallyValidID;
+    const showInvalidIDError = hasStartedTyping && !validID && !isPotentiallyValidID;
 
     //recuperare dal safeStorage il nome utente
     useEffect(() => {
@@ -31,8 +55,20 @@ function UserIDEsistente() {
         if (storedID) {
             setUserID(storedID);
             setSavedUserID(storedID);
+            setValidID(regex.test(storedID));
         }
     }, []);
+
+    const validateInput = (inputValue) => {
+        const input = inputValue.toUpperCase();
+
+        if (!hasStartedTyping)
+            setHasStartedTyping(true);
+
+        setUserNameErrato(false);
+        setUserID(input);
+        setValidID(regex.test(input));
+    };
 
     // gestione chiusura Snackbar
     const handleCloseSnackbar = (event, reason) => {
@@ -44,7 +80,7 @@ function UserIDEsistente() {
     const saveUserID = async (e) => {
         e.preventDefault();
 
-        if (!userID) return;
+        if (!validID) return;
         setIsSubmitting(true);
 
         // Apri snackbar di info con spinner
@@ -153,21 +189,24 @@ function UserIDEsistente() {
     }
 
     return (
-        <div className="user-id">
-            <div className="arrow-left">
+        <div className="user-id content-box">
+            <div className="arrow-left arrow-left-content-aligned">
                 <Button variant="outlined" onClick={() => navigate("/user-ID")}>   <WestSharpIcon /> </Button>
             </div>
-            <h1>Ciao.</h1>
-            <p>Eccoti nell'applicazione pensata per l'esperimento di raccolta dati sul mood</p>
-            <h5 className="blue">Inserisci il tuo ID univoco.</h5>
+            <h1>È bello rivederti su <span>MoodApp</span></h1>
+            <p>Per continuare l'esperimento, accedi all'applicazione inserendo il tuo ID univoco.</p>
+            <p>Se hai dubbi riguardo l'ID univoco, consulta le istruzioni qui sotto.</p>
+            <br />
             <form onSubmit={saveUserID} >
                 <TextField
+                    id="IDinput"
+                    fullWidth
                     required
                     variant="outlined"
                     name="userID"
-                    placeholder="ID"
+                    placeholder="B0101AA00"
                     value={userID}
-                    onChange={(e) => setUserID(e.target.value.toUpperCase())}
+                    onChange={(e) => validateInput(e.target.value)}
                     slotProps={{
                         input: {
                             style: {
@@ -183,18 +222,59 @@ function UserIDEsistente() {
                     }}
                 />
                 <div className="bottone-userID">
-                    <Button fullWidth type="submit" variant="contained" disabled={!userID}>Continua</Button>
+                    <Button fullWidth type="submit" variant="contained" disabled={!validID} size="large">Continua</Button>
                 </div>
             </form>
 
             <div className="user-id-red">
                 {userNameErrato ?
                     <p style={{ justifyContent: "left" }}>ID non trovato, riprova o <Link onClick={registrazione}>procedi con la registrazione</Link></p>
-                    : <p>*completa tutti i campi prima di procedere.</p>}
+                    : null}
             </div>
-            <div className="naviga-id-dimenticato">
-                <Link to="/ID-dimenticato">Hai dimenticato il tuo ID univoco?</Link>
-            </div>
+
+            {showIncompleteIDWarning &&
+                <div className="user-id-warning">
+                    <h5>*Inserisci un ID completo</h5>
+                </div>}
+
+            {showInvalidIDError &&
+                <div className="user-id-red">
+                    <h5>*Inserisci un ID valido per continuare</h5>
+                </div>}
+            <br></br>
+            <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <b class="blue">Non mi ricordo come si compone l'ID univoco, come posso accedere?</b>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <p>L'ID serve per riconoscerti nello studio senza usare il tuo nome.</p>
+                    <p>Formato: iniziale università + GGMM + iniziali madre + AA.</p>
+                    <p>Il formato è sempre lo stesso, ma se non riesci a ricordarlo, ecco un esempio di come costruire il tuo ID univoco:</p>
+                    <ul>
+                        <li>Iniziale dell’università con cui stai facendo l’esperimento (P Politecnico, B Bicocca)</li>
+                        <li>La tua data di nascita, solo i numeri del giorno e del mese (GGMM)</li>
+                        <li>Le iniziali del primo nome e cognome di tua madre</li>
+                        <li>Le ultime due cifre dell’anno di nascita di tua madre (AA)</li>
+                    </ul>
+                    <p>
+                        Per esempio, se stai facendo l’esperimento con l’università Bicocca, il tuo compleanno è il 7 febbraio, tua madre si chiama Carla Rossi ed è nata nel 1971; il codice ID sarà B0702CR71.
+                    </p>
+                </AccordionDetails>
+            </Accordion>
+            <br></br>
+            <Accordion>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                    <b class="blue">Il mio ID univoco non funziona, cosa posso fare?</b>
+                </AccordionSummary>
+                <AccordionDetails>
+                    <p>Se non riesci a ricordarlo e la guida per ricreare l'ID non ti aiuta, non preoccuparti! Siamo a tua disposizione.<br />
+                    <br />
+                    Mandaci una mail e saremo pronti ad aiutarti:
+                    </p>
+                    <Button variant="contained" className="bottone-userID-dimenticato" onClick={handleMailClick} size="large">Contattaci</Button>
+                    <br />
+                </AccordionDetails>
+            </Accordion>
             {/* Snackbar recupero dati */}
             <Snackbar
                 open={snackbarOpen}
@@ -216,13 +296,21 @@ function UserIDEsistente() {
                     sx={{
                         width: "100%",
                         textAlign: "center",
-                        p: "0 2px 38px 2px",
+                        p: "16px",
                         display: 'flex',
                         alignItems: 'center',
-                        justifyContent: 'center'
+                        justifyContent: 'center',
+                        '& .MuiAlert-message': {
+                            width: '100%',
+                            padding: 0,
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '12px',
+                        },
                     }}
                 >
-                    {isSubmitting && <CircularProgress size={24} sx={{ mr: 2 }} />}
+                    {isSubmitting && <CircularProgress size={24} />}
                     <span>{snackbarMessage}</span>
                 </Alert>
             </Snackbar>

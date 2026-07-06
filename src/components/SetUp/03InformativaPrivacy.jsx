@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, FormControlLabel, Radio } from "@mui/material";
-import { useNavigate } from 'react-router'
+import { useNavigate, Link } from 'react-router'
 import WestSharpIcon from '@mui/icons-material/WestSharp';
 import EastSharpIcon from '@mui/icons-material/EastSharp';
 import safeStorage from "../../../safeStorage";
@@ -8,19 +8,97 @@ import safeStorage from "../../../safeStorage";
 function InformativaPrivacy() {
     const navigate = useNavigate();
     const [privacyAccettata, setPrivacyAccettata] = useState(false);
+    const [isAtBottom, setIsAtBottom] = useState(false);
+    const [isConsentClearlyVisible, setIsConsentClearlyVisible] = useState(false);
+    const [hasShownProceedWarning, setHasShownProceedWarning] = useState(false);
+    const textContainerRef = useRef(null);
+    const consentRef = useRef(null);
 
     const handleChange = (event) => {
         setPrivacyAccettata(event.target.checked);
     };
 
+    const handleMailClick = () => {
+        window.location.href = "mailto:claudia.rabaioli@unimib.it";
+    };
+
+    useEffect(() => {
+        const checkIfAtBottom = () => {
+            const textContainer = textContainerRef.current;
+            const consentElement = consentRef.current;
+            const hasScrollableTextContainer =
+                textContainer && textContainer.scrollHeight > textContainer.clientHeight + 1;
+
+            if (hasScrollableTextContainer) {
+                const thresholdPx = Math.max(120, Math.round(textContainer.clientHeight * 0.1));
+                const remainingInsideContainer =
+                    textContainer.scrollHeight - textContainer.clientHeight - textContainer.scrollTop;
+                setIsAtBottom(remainingInsideContainer <= thresholdPx);
+
+                if (consentElement) {
+                    const consentTop = consentElement.offsetTop;
+                    const consentBottom = consentTop + consentElement.offsetHeight;
+                    const viewportTop = textContainer.scrollTop;
+                    const viewportBottom = viewportTop + textContainer.clientHeight;
+                    const visiblePx = Math.max(0, Math.min(consentBottom, viewportBottom) - Math.max(consentTop, viewportTop));
+                    const visibleRatio = consentElement.offsetHeight > 0 ? visiblePx / consentElement.offsetHeight : 0;
+                    setIsConsentClearlyVisible(visibleRatio >= 0.8);
+                }
+                return;
+            }
+
+            const scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+            const viewportHeight = window.innerHeight;
+            const documentHeight = Math.max(
+                document.body.scrollHeight,
+                document.documentElement.scrollHeight
+            );
+            const remainingOnPage = documentHeight - (scrollTop + viewportHeight);
+            const thresholdPx = Math.max(120, Math.round(viewportHeight * 0.2));
+            setIsAtBottom(remainingOnPage <= thresholdPx);
+
+            if (consentElement) {
+                const rect = consentElement.getBoundingClientRect();
+                const visiblePx = Math.max(0, Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0));
+                const visibleRatio = rect.height > 0 ? visiblePx / rect.height : 0;
+                setIsConsentClearlyVisible(visibleRatio >= 0.8);
+            }
+        };
+
+        checkIfAtBottom();
+        window.addEventListener("scroll", checkIfAtBottom, { passive: true });
+        window.addEventListener("resize", checkIfAtBottom);
+        textContainerRef.current?.addEventListener("scroll", checkIfAtBottom, { passive: true });
+
+        return () => {
+            window.removeEventListener("scroll", checkIfAtBottom);
+            window.removeEventListener("resize", checkIfAtBottom);
+            textContainerRef.current?.removeEventListener("scroll", checkIfAtBottom);
+        };
+    }, []);
+
     safeStorage.setItem("Informativa Privacy Accettata", privacyAccettata);
+    const isContinueDisabled = !privacyAccettata;
+    useEffect(() => {
+        if (isAtBottom && isConsentClearlyVisible && isContinueDisabled) {
+            setHasShownProceedWarning(true);
+        }
+    }, [isAtBottom, isConsentClearlyVisible, isContinueDisabled]);
+
+    const handleProceedAttempt = () => {
+        if (isContinueDisabled) {
+            setHasShownProceedWarning(true);
+        }
+    };
+
+    const showProceedWarning = hasShownProceedWarning && isContinueDisabled;
 
     return (
-        <div>
-            <div className="arrow-left">
+        <div className="content-box">
+            <div className="arrow-left arrow-left-content-aligned">
                 <Button variant="outlined" onClick={() => navigate("/user-ID")}>   <WestSharpIcon /> </Button>
             </div>
-            <div className="contenitore-testo">
+            <div className="contenitore-testo" ref={textContainerRef}>
                 <h1>Informativa sulla Privacy</h1>
                 <p>
                     <b>1. Accettazione dei Termini</b><br />
@@ -41,23 +119,25 @@ function InformativaPrivacy() {
                     <b>7. Modifiche ai Termini</b><br />
                     Ci riserviamo il diritto di modificare i presenti Termini in qualsiasi momento. Gli aggiornamenti saranno comunicati attraverso l’applicazione e saranno effettivi dalla data di pubblicazione.<br /><br />
                     <b>8. Contatti</b><br />
-                    Per domande relative ai presenti Termini e Condizioni, contattare:
+                    Per domande relative ai presenti Termini e Condizioni, contattare  <Link variant="text" onClick={handleMailClick}>claudia.rabaioli@unimib.it</Link>.
                 </p>
-                <div>
+                <div className="blue-text" ref={consentRef}>
                     <FormControlLabel
                         value="privacy"
                         control={<Radio checked={privacyAccettata}
                             onChange={handleChange} />}
-                        label="Accetta i termini di Privacy"
+                        label="Ho letto e accetto l’informativa sulla privacy."
                         required
                     />
                 </div>
             </div>
-            <div className="red">
-                <p>*completa tutti i campi prima di procedere.</p>
-            </div>
-            <div className="arrow-right">
-                <Button variant="contained" disabled={!privacyAccettata} onClick={() => navigate("/termini-e-condizioni")}> <EastSharpIcon /></Button>
+            {showProceedWarning && (
+                <div className="red bg-solid-color arrow-right-content-aligned">
+                    <p className="warning-text">*Per continuare, conferma di aver letto l’informativa.</p>
+                </div>
+            )}
+            <div className="arrow-right arrow-right-content-aligned" onMouseDown={handleProceedAttempt} onTouchStart={handleProceedAttempt}>
+                <Button variant="contained" disabled={isContinueDisabled} onClick={() => navigate("/termini-e-condizioni")}> <EastSharpIcon /></Button>
             </div>
         </div>
     )

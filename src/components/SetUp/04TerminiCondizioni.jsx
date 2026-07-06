@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, FormControlLabel, Radio } from "@mui/material";
 import { useNavigate, Link } from 'react-router'
 import WestSharpIcon from '@mui/icons-material/WestSharp';
@@ -8,6 +8,11 @@ import safeStorage from "../../../safeStorage";
 function TerminiCondizioni() {
     const navigate = useNavigate();
     const [terminiCondizioniAccettati, setTerminiCondizioniAccettati] = useState(false);
+    const [isAtBottom, setIsAtBottom] = useState(false);
+    const [isConsentClearlyVisible, setIsConsentClearlyVisible] = useState(false);
+    const [hasShownProceedWarning, setHasShownProceedWarning] = useState(false);
+    const textContainerRef = useRef(null);
+    const consentRef = useRef(null);
 
     const handleChange = (event) => {
         setTerminiCondizioniAccettati(event.target.checked);
@@ -17,14 +22,83 @@ function TerminiCondizioni() {
         window.location.href = "mailto:claudia.rabaioli@unimib.it";
     };
 
+    useEffect(() => {
+        const checkIfAtBottom = () => {
+            const textContainer = textContainerRef.current;
+            const consentElement = consentRef.current;
+            const hasScrollableTextContainer =
+                textContainer && textContainer.scrollHeight > textContainer.clientHeight + 1;
+
+            if (hasScrollableTextContainer) {
+                const thresholdPx = Math.max(120, Math.round(textContainer.clientHeight * 0.4));
+                const remainingInsideContainer =
+                    textContainer.scrollHeight - textContainer.clientHeight - textContainer.scrollTop;
+                setIsAtBottom(remainingInsideContainer <= thresholdPx);
+
+                if (consentElement) {
+                    const consentTop = consentElement.offsetTop;
+                    const consentBottom = consentTop + consentElement.offsetHeight;
+                    const viewportTop = textContainer.scrollTop;
+                    const viewportBottom = viewportTop + textContainer.clientHeight;
+                    const visiblePx = Math.max(0, Math.min(consentBottom, viewportBottom) - Math.max(consentTop, viewportTop));
+                    const visibleRatio = consentElement.offsetHeight > 0 ? visiblePx / consentElement.offsetHeight : 0;
+                    setIsConsentClearlyVisible(visibleRatio >= 0.8);
+                }
+                return;
+            }
+
+            const scrollTop = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
+            const viewportHeight = window.innerHeight;
+            const documentHeight = Math.max(
+                document.body.scrollHeight,
+                document.documentElement.scrollHeight
+            );
+            const remainingOnPage = documentHeight - (scrollTop + viewportHeight);
+            const thresholdPx = Math.max(120, Math.round(viewportHeight * 0.2));
+            setIsAtBottom(remainingOnPage <= thresholdPx);
+
+            if (consentElement) {
+                const rect = consentElement.getBoundingClientRect();
+                const visiblePx = Math.max(0, Math.min(rect.bottom, viewportHeight) - Math.max(rect.top, 0));
+                const visibleRatio = rect.height > 0 ? visiblePx / rect.height : 0;
+                setIsConsentClearlyVisible(visibleRatio >= 0.8);
+            }
+        };
+
+        checkIfAtBottom();
+        window.addEventListener("scroll", checkIfAtBottom, { passive: true });
+        window.addEventListener("resize", checkIfAtBottom);
+        textContainerRef.current?.addEventListener("scroll", checkIfAtBottom, { passive: true });
+
+        return () => {
+            window.removeEventListener("scroll", checkIfAtBottom);
+            window.removeEventListener("resize", checkIfAtBottom);
+            textContainerRef.current?.removeEventListener("scroll", checkIfAtBottom);
+        };
+    }, []);
+
     safeStorage.setItem("Termini e Condizioni Accettati", terminiCondizioniAccettati);
+    const isContinueDisabled = !terminiCondizioniAccettati;
+    useEffect(() => {
+        if (isAtBottom && isConsentClearlyVisible && isContinueDisabled) {
+            setHasShownProceedWarning(true);
+        }
+    }, [isAtBottom, isConsentClearlyVisible, isContinueDisabled]);
+
+    const handleProceedAttempt = () => {
+        if (isContinueDisabled) {
+            setHasShownProceedWarning(true);
+        }
+    };
+
+    const showProceedWarning = hasShownProceedWarning && isContinueDisabled;
 
     return (
-        <div>
-            <div className="arrow-left">
+        <div className="content-box">
+            <div className="arrow-left arrow-left-content-aligned">
                 <Button variant="outlined" onClick={() => navigate("/informativa-privacy")}>   <WestSharpIcon /> </Button>
             </div>
-            <div className="contenitore-testo">
+            <div className="contenitore-testo" ref={textContainerRef}>
                 <h1>Termini e Condizioni</h1>
                 <p>
                     <b>1. Introduzione</b><br />
@@ -74,20 +148,22 @@ function TerminiCondizioni() {
                     <b>9. Contatti</b><br />
                     Per esercitare i propri diritti o per ulteriori informazioni sulla gestione dei dati, è possibile contattare: <Link variant="text" onClick={handleMailClick}>claudia.rabaioli@unimib.it</Link>.
                 </p>
-                <div>
+                <div className="blue-text" ref={consentRef}>
                     <FormControlLabel
                         value="termini"
                         control={<Radio checked={terminiCondizioniAccettati} onChange={handleChange}/>}
-                        label="Accetta i termini e condizioni"
+                        label="Ho letto e accetto i termini e le condizioni."
                         required
                     />
                 </div>
             </div>
-            <div className="red">
-                <p>*completa tutti i campi prima di procedere.</p>
-            </div>
-            <div className="arrow-right">
-                <Button variant="contained" disabled={!terminiCondizioniAccettati} onClick={() => navigate("/generalità")}> <EastSharpIcon /></Button>
+            {showProceedWarning && (
+                <div className="red bg-solid-color arrow-right-content-aligned">
+                    <p className="warning-text">*Per continuare, conferma di aver letto i termini e le condizioni.</p>
+                </div>
+            )}
+            <div className="arrow-right arrow-right-content-aligned" onMouseDown={handleProceedAttempt} onTouchStart={handleProceedAttempt}>
+                <Button variant="contained" disabled={isContinueDisabled} onClick={() => navigate("/generalità")}> <EastSharpIcon /></Button>
             </div>
         </div>
     )

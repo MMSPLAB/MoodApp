@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Button } from "@mui/material";
 import { useNavigate, useParams } from "react-router";
 import singoliMood from "../../assets/singoliMood.json";
@@ -13,7 +13,8 @@ function MoodIntensity() {
     const { avatar, moodId } = useParams();
     const mood = singoliMood[avatar]?.[moodId];
     const navigate = useNavigate();
-    const [selectedRating, setSelectedRating] = useState("");
+    const [selectedRating, setSelectedRating] = useState(0);
+    const [hasTriedProceed, setHasTriedProceed] = useState(false);
 
     useQuestionarioTimer();
 
@@ -27,6 +28,19 @@ function MoodIntensity() {
 
         navigate("/pick-a-mood")
     }
+
+    const handleRatingChange = useCallback((newRating) => {
+        setSelectedRating(newRating);
+        if (newRating > 0) {
+            setHasTriedProceed(false);
+        }
+    }, []);
+
+    const handleProceedAttempt = () => {
+        if (selectedRating === 0) {
+            setHasTriedProceed(true);
+        }
+    };
 
     if (!mood) {
         addLog("Mood selezionato non valido in MoodIntensity", "error")
@@ -58,11 +72,13 @@ function MoodIntensity() {
                     <h3 className="blu-maiuscolo">Quanto reputi intenso l'umore selezionato?</h3>
                 </div>
             </div>
-            <CircleRating storageKey={mood.alt} onChange={setSelectedRating} />
-            <div className="red">
-                <p>*completa tutti i campi prima di procedere.</p>
-            </div>
-            <div className="arrow-right">
+            <CircleRating storageKey={mood.alt} onChange={handleRatingChange} />
+            {hasTriedProceed && selectedRating === 0 && (
+                <div className="red bg-solid-color arrow-right-content-aligned">
+                    <p className="warning-text">Seleziona un valore di intensità prima di procedere.</p>
+                </div>
+            )}
+            <div className="arrow-right arrow-right-content-aligned" onMouseDown={handleProceedAttempt} onTouchStart={handleProceedAttempt}>
                 <Button variant="contained" disabled={selectedRating === 0} onClick={() => navigate("/esercizio-fisico")}> <EastSharpIcon /> </Button>
             </div>
         </div>
